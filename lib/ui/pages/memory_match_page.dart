@@ -5,10 +5,12 @@ import 'package:gunita20/ui/widgets/mobile/game_board_mobile.dart';
 class MemoryMatchPage extends StatelessWidget {
   const MemoryMatchPage({
     required this.gameLevel,
+    required this.difficulty,
     super.key,
   });
 
   final int gameLevel;
+  final int difficulty;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class MemoryMatchPage extends StatelessWidget {
             } else {
               return GameBoardMobile(
                 gameLevel: gameLevel,
+                difficulty: difficulty,
               );
             }
           }),

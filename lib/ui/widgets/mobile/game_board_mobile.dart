@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gunita20/services/firebase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gunita20/models/game.dart';
@@ -15,17 +17,20 @@ import 'package:gunita20/ui/widgets/restart_game.dart';
 class GameBoardMobile extends StatefulWidget {
   const GameBoardMobile({
     required this.gameLevel,
+    required this.difficulty,
     Key? key,
   }) : super(key: key);
 
   final int gameLevel;
+  final int difficulty;
 
   @override
   State<GameBoardMobile> createState() => _GameBoardMobileState();
 }
 
 class _GameBoardMobileState extends State<GameBoardMobile> {
-  late Timer timer = Timer(Duration(seconds: 0), () {}); // Initialize with an empty timer
+  late Timer timer =
+      Timer(Duration(seconds: 0), () {}); // Initialize with an empty timer
   late Game game;
   late Duration duration;
   int bestTime = 0;
@@ -64,53 +69,73 @@ class _GameBoardMobileState extends State<GameBoardMobile> {
   }
 
   void startTimer() {
-  if (!isGameStarted) {
-    return;
-  }
-
-  timer = Timer.periodic(const Duration(seconds: 1), (_) async {
-    if (!mounted) {
-      // Check if the widget is still mounted before calling setState
+    if (!isGameStarted) {
       return;
     }
 
-    setState(() {
-      final seconds = duration.inSeconds + 1;
-      duration = Duration(seconds: seconds);
-    });
-
-void _showCongratulationsPopup(Duration gameTime) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => GameConfetti(gameTime: gameTime),
-    ),
-  );
-}
-
-    if (game.isGameOver) {
-  timer.cancel();
-  SharedPreferences gameSP = await SharedPreferences.getInstance();
-  if (gameSP.getInt('${widget.gameLevel.toString()}BestTime') == null ||
-      gameSP.getInt('${widget.gameLevel.toString()}BestTime')! >
-          duration.inSeconds) {
-    gameSP.setInt(
-        '${widget.gameLevel.toString()}BestTime', duration.inSeconds);
-    setState(() {
-      showConfetti = true;
-      bestTime = duration.inSeconds;
-    });
-    _showCongratulationsPopup(duration); // Pass the duration to GameConfetti
-  } else {
-    // If the game is over but the current time is not the best time,
-    // still show confetti.
-    setState(() {
-      showConfetti = true;
-        });
+    timer = Timer.periodic(const Duration(seconds: 1), (_) async {
+      if (!mounted) {
+        // Check if the widget is still mounted before calling setState
+        return;
       }
-    }
-  });
-}
+
+      setState(() {
+        final seconds = duration.inSeconds + 1;
+        duration = Duration(seconds: seconds);
+      });
+
+      Future<void> _showCongratulationsPopup(Duration gameTime) async {
+        try {
+          final String userId = FirebaseService().user.uid;
+
+          await FirebaseFirestore.instance
+              .collection("Users")
+              .doc(userId)
+              .collection("games")
+              .doc("matching")
+              .collection("plays")
+              .add({
+            "gameFinishedAt": FieldValue.serverTimestamp(),
+            "duration": gameTime.inSeconds,
+            "difficulty":
+                widget.difficulty, // 0 for easy, 1 for medium, 2 for hard.
+          });
+        } catch (e) {
+          print("Error adding game data to Firestore: $e");
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GameConfetti(gameTime: gameTime),
+          ),
+        );
+      }
+
+      if (game.isGameOver) {
+        timer.cancel();
+        SharedPreferences gameSP = await SharedPreferences.getInstance();
+        if (gameSP.getInt('${widget.gameLevel.toString()}BestTime') == null ||
+            gameSP.getInt('${widget.gameLevel.toString()}BestTime')! >
+                duration.inSeconds) {
+          gameSP.setInt(
+              '${widget.gameLevel.toString()}BestTime', duration.inSeconds);
+          setState(() {
+            showConfetti = true;
+            bestTime = duration.inSeconds;
+          });
+          _showCongratulationsPopup(
+              duration); // Pass the duration to GameConfetti
+        } else {
+          // If the game is over but the current time is not the best time,
+          // still show confetti.
+          setState(() {
+            showConfetti = true;
+          });
+        }
+      }
+    });
+  }
 
   void pauseTimer() {
     if (isGameStarted && timer != null && timer.isActive) {
@@ -133,7 +158,8 @@ void _showCongratulationsPopup(Duration gameTime) {
     });
 
     SharedPreferences gameSP = await SharedPreferences.getInstance();
-    gameSP.remove('${widget.gameLevel.toString()}BestTime'); // Clear best time in SharedPreferences
+    gameSP.remove(
+        '${widget.gameLevel.toString()}BestTime'); // Clear best time in SharedPreferences
   }
 
   @override
@@ -149,14 +175,14 @@ void _showCongratulationsPopup(Duration gameTime) {
               const SizedBox(
                 height: 20,
               ),
-             RestartGame(
-                  isGameOver: game.isGameOver,
-                  pauseGame: () => pauseTimer(),
-                  restartGame: () => _resetGame(),
-                  continueGame: () => startTimer(),
-                  resetGame: () => _resetGame(),
-                  color: Colors.greenAccent[700]!,
-                ),
+              RestartGame(
+                isGameOver: game.isGameOver,
+                pauseGame: () => pauseTimer(),
+                restartGame: () => _resetGame(),
+                continueGame: () => startTimer(),
+                resetGame: () => _resetGame(),
+                color: Colors.greenAccent[700]!,
+              ),
               GameTimerMobile(
                 time: duration,
               ),
@@ -164,7 +190,8 @@ void _showCongratulationsPopup(Duration gameTime) {
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: game.gridSize,
-                    childAspectRatio: aspectRatio * 2, // Adjust the aspect ratio
+                    childAspectRatio:
+                        aspectRatio * 2, // Adjust the aspect ratio
                   ),
                   itemBuilder: (context, index) {
                     return MemoryCard(
@@ -182,7 +209,6 @@ void _showCongratulationsPopup(Duration gameTime) {
             ],
           ),
           showConfetti ? GameConfetti(gameTime: duration) : const SizedBox(),
-
           Positioned(
             bottom: 110.0,
             left: MediaQuery.of(context).size.width / 2 - 140.0,

@@ -2,100 +2,114 @@ import 'package:flutter/material.dart';
 // import 'package:gunita20/screens/matching/category.dart';
 import 'package:gunita20/ui/pages/memory_match_page.dart';
 
-
 class MatchingDifficultyScreen extends StatefulWidget {
   const MatchingDifficultyScreen({Key? key}) : super(key: key);
 
   @override
-  _MatchingDifficultyScreenState createState() => _MatchingDifficultyScreenState();
+  _MatchingDifficultyScreenState createState() =>
+      _MatchingDifficultyScreenState();
 }
 
 class _MatchingDifficultyScreenState extends State<MatchingDifficultyScreen> {
   final List<Map<String, dynamic>> gameLevels = [
-    {'title': 'Easy', 'level': 2, 'color': Color(0xfffc36C655)},
-    {'title': 'Medium', 'level': 4, 'color': Color(0xfffc36C655)},
-    {'title': 'Hard', 'level': 6, 'color': Color(0xfffc36C655)},
+    {
+      'title': 'Easy',
+      'level': 2,
+      'color': Color(0xfffc36C655),
+      'difficulty': 0
+    },
+    {
+      'title': 'Medium',
+      'level': 4,
+      'color': Color(0xfffc36C655),
+      'difficulty': 1
+    },
+    {
+      'title': 'Hard',
+      'level': 6,
+      'color': Color(0xfffc36C655),
+      'difficulty': 2
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/pair_play.png'),
-            fit: BoxFit.cover,
+        body: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/pair_play.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Column(children: [
+        SizedBox(height: 16.0),
+        Align(
+          alignment: Alignment.topLeft,
+          child: GestureDetector(
+            onTap: () {
+              // Handle back button press
+              Navigator.pop(context);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 30.0, top: 35.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xffcE17612),
+              ),
+              padding: EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 32.0,
+              ),
+            ),
           ),
         ),
-        child: Column(
-          children: [
-            SizedBox(height: 16.0),
-            Align(
-              alignment: Alignment.topLeft,
-              child: GestureDetector(
-                onTap: () {
-                  // Handle back button press
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(left: 30.0, top: 35.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xffcE17612),
-                  ),
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 32.0,
-                  ),
+        SizedBox(height: 50), // Removed extra SizedBox
+        Center(
+          child: Stack(
+            children: [
+              Text(
+                'CHOOSE ONE MODE:',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontFamily: 'kg_inimitable_original',
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..color = Colors.black
+                    ..strokeWidth = 4,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(1.0),
+                      offset: Offset(1, 7.5),
+                      blurRadius: 5,
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(height: 50), // Removed extra SizedBox
-            Center(
-              child: Stack(
-                children: [
-                  Text(
-                    'CHOOSE ONE MODE:',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      fontFamily: 'kg_inimitable_original',
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..color = Colors.black
-                        ..strokeWidth = 4,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(1.0),
-                          offset: Offset(1, 7.5),
-                          blurRadius: 5,
-                        ),
-                      ],
+              Text(
+                'CHOOSE ONE MODE:',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontFamily: 'kg_inimitable_original',
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.5),
+                      offset: Offset(0, 0),
+                      blurRadius: 0,
                     ),
-                  ),
-                  Text(
-                    'CHOOSE ONE MODE:',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      fontFamily: 'kg_inimitable_original',
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.5),
-                          offset: Offset(0, 0),
-                          blurRadius: 0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 60),
-            Column(
+            ],
+          ),
+        ),
+        SizedBox(height: 60),
+        Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: gameLevels.map((level) {
             return Column(
@@ -118,7 +132,10 @@ class _MatchingDifficultyScreenState extends State<MatchingDifficultyScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MemoryMatchPage(gameLevel: level['level']),
+                          builder: (context) => MemoryMatchPage(
+                            gameLevel: level['level'],
+                            difficulty: level['difficulty'],
+                          ),
                         ),
                       );
                     },
@@ -148,9 +165,7 @@ class _MatchingDifficultyScreenState extends State<MatchingDifficultyScreen> {
             );
           }).toList(),
         ),
-          ]
-      ),
-      )
-    );
+      ]),
+    ));
   }
 }
