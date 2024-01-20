@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "380195206716",
+    "project_id": "gunita20-582d5",
+    "storage_bucket": "gunita20-582d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380195206716:android:5539358c3b1ee3f322f539",
+        "android_client_info": {
+          "package_name": "com.flutllab.gunita20"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380195206716-kdieujf9v3uq7nu6l11v7gvpj3905688.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbp6lNvZzREpnWPee5T_JbL9WrvmbBs2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380195206716-kdieujf9v3uq7nu6l11v7gvpj3905688.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
