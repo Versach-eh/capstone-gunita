@@ -11,7 +11,10 @@ class GameOptions extends StatelessWidget {
   static Route<dynamic> _routeBuilder(BuildContext context, int gameLevel) {
     return MaterialPageRoute(
       builder: (_) {
-        return MemoryMatchPage(gameLevel: gameLevel);
+        return MemoryMatchPage(
+          gameLevel: gameLevel,
+          difficulty: 0,
+        );
       },
     );
   }
@@ -29,7 +32,7 @@ class GameOptions extends StatelessWidget {
             title: level['title'],
             color: level['color']![700]!,
             width: 250,
-          ),  
+          ),
         );
       }).toList(),
     );

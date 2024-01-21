@@ -16,11 +16,11 @@ class GameConfetti extends StatefulWidget {
 }
 
 class _GameConfettiState extends State<GameConfetti> {
-  final controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
+  final controllerCenter =
+      ConfettiController(duration: const Duration(seconds: 10));
 
   late BuildContext popupContext;
   late Duration gameTime; // Store the time taken in the game
-  
 
   @override
   void initState() {
@@ -36,37 +36,41 @@ class _GameConfettiState extends State<GameConfetti> {
   void showCongratulationsPopup(BuildContext context, Duration gameTime) {
     popupContext = context;
 
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-          side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
-        ),
-        backgroundColor: Colors.white, // Change to white
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-            width: 300.0, // Adjusted width
-            padding: EdgeInsets.symmetric(vertical: 15.0), // Adjusted padding
-              decoration: BoxDecoration(
-                color: Color(0xfffcFFDE59), // Ribbon background color
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  topRight: Radius.circular(12.0),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
+          ),
+          backgroundColor: Colors.white, // Change to white
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 300.0, // Adjusted width
+                padding:
+                    EdgeInsets.symmetric(vertical: 15.0), // Adjusted padding
+                decoration: BoxDecoration(
+                  color: Color(0xfffcFFDE59), // Ribbon background color
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.0),
+                    topRight: Radius.circular(12.0),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'Congratulations!',
+                    style: TextStyle(
+                        color: Color(0xfffcE17612),
+                        fontFamily: 'purple_smile',
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  'Congratulations!',
-                  style: TextStyle(color: Color(0xfffcE17612),  fontFamily: 'purple_smile',fontSize: 30.0, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            Text(
+              Text(
                 'Your score is ${formatDuration(gameTime)}!',
                 style: TextStyle(
                   color: Colors.black,
@@ -75,104 +79,103 @@ class _GameConfettiState extends State<GameConfetti> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            SizedBox(height: 16.0),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.green.shade800.withOpacity(1.0),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(0, 6),
+              SizedBox(height: 16.0),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.shade800.withOpacity(1.0),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset: Offset(0, 6),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(20), // Rounded sides
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        playAgain();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(230, 50),
+                        primary: Color(0xfffc36C655),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: Colors.white,
+                            width: 3.0,
+                          ),
+                        ),
+                        shadowColor: Colors.green.shade800.withOpacity(0.8),
+                        elevation: 5,
                       ),
-                    ],
-                    borderRadius: BorderRadius.circular(20), // Rounded sides
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      playAgain();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(230, 50),
-                      primary: Color(0xfffc36C655),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(
+                      child: Text(
+                        "Play again",
+                        style: TextStyle(
+                          fontFamily: 'purple_smile',
                           color: Colors.white,
-                          width: 3.0,
+                          fontSize: 24.0,
                         ),
                       ),
-                      shadowColor: Colors.green.shade800.withOpacity(0.8),
-                      elevation: 5,
-                    ),
-                    child: Text(
-                      "Play again",
-                      style: TextStyle(
-                        fontFamily: 'purple_smile',
-                        color: Colors.white,
-                        fontSize: 24.0,
-                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.red.shade800.withOpacity(1.0),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(20), // Rounded sides
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                       Navigator.push(
+                  SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.shade800.withOpacity(1.0),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset: Offset(0, 6),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(20), // Rounded sides
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => GameLibrary(),
                           ),
                         );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(230, 50),
-                      primary: Color(0xfffcD63131),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(
-                          color: Colors.white,
-                          width: 3.0,
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(230, 50),
+                        primary: Color(0xfffcD63131),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: Colors.white,
+                            width: 3.0,
+                          ),
                         ),
+                        shadowColor: Colors.red.shade800.withOpacity(0.8),
+                        elevation: 5,
                       ),
-                      shadowColor: Colors.red.shade800.withOpacity(0.8),
-                      elevation: 5,
-                    ),
-                    child: Text(
-                      "Quit",
-                      style: TextStyle(
-                        fontFamily: 'purple_smile',
-                        color: Colors.white,
-                        fontSize: 24.0,
+                      child: Text(
+                        "Quit",
+                        style: TextStyle(
+                          fontFamily: 'purple_smile',
+                          color: Colors.white,
+                          fontSize: 24.0,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   String formatDuration(Duration duration) {
     // Format the duration as per your requirement
@@ -182,7 +185,8 @@ class _GameConfettiState extends State<GameConfetti> {
   void playAgain() {
     Navigator.pushReplacement(
       popupContext,
-      MaterialPageRoute(builder: (BuildContext context) => CategoryMatchingMenuScreen()),
+      MaterialPageRoute(
+          builder: (BuildContext context) => CategoryMatchingMenuScreen()),
     );
   }
 

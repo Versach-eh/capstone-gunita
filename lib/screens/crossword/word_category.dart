@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/crossword/enter_word.dart';
 
-
 class CategoryWordMenuScreen extends StatefulWidget {
   const CategoryWordMenuScreen({Key? key}) : super(key: key);
 
@@ -34,7 +33,8 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                   margin: EdgeInsets.only(left: 30.0, top: 35.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xffcE17612), // Changed from fcE17612 to cE17612
+                    color:
+                        Color(0xffcE17612), // Changed from fcE17612 to cE17612
                   ),
                   padding: EdgeInsets.all(8.0),
                   child: Icon(
@@ -109,13 +109,17 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EnterWordScreen(),
+                          builder: (context) => EnterWordScreen(
+                            maxAllowedWords: 4,
+                            difficulty: 0,
+                          ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
-                      primary: Color(0xffc36C655), // Changed from fc36C655 to c36C655
+                      primary: Color(
+                          0xffc36C655), // Changed from fc36C655 to c36C655
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
@@ -150,6 +154,15 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnterWordScreen(
+                            maxAllowedWords: 6,
+                            difficulty: 1,
+                          ),
+                        ),
+                      );
                       // Change CategoryWordMenuScreen to TheMemoryMatchGame
                       // Navigator.push(
                       //   context,
@@ -160,7 +173,8 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
-                      primary: Color(0xffc36C655), // Changed from fc36C655 to c36C655
+                      primary: Color(
+                          0xffc36C655), // Changed from fc36C655 to c36C655
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
@@ -195,6 +209,15 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnterWordScreen(
+                            maxAllowedWords: 8,
+                            difficulty: 2,
+                          ),
+                        ),
+                      );
                       // Navigator.push(
                       //   context,
                       //   MaterialPageRoute(
@@ -204,7 +227,8 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
-                      primary: Color(0xffc36C655), // Changed from fc36C655 to c36C655
+                      primary: Color(
+                          0xffc36C655), // Changed from fc36C655 to c36C655
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide(

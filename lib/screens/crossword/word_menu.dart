@@ -21,7 +21,8 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
             borderRadius: BorderRadius.circular(20.0),
             side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
           ),
-          backgroundColor: Color(0xfffcFFF9E3), // Set your custom background color here
+          backgroundColor:
+              Color(0xfffcFFF9E3), // Set your custom background color here
           title: Text(
             'Are you sure you want to quit?',
             style: TextStyle(
@@ -88,7 +89,7 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Dismiss the dialog
-                    // You can add your quit logic here
+                    Navigator.of(context).pop(); // Return to the previous page
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(230, 50),
@@ -119,6 +120,7 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,91 +136,93 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
           children: [
             SizedBox(height: 90),
             Center(
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Stack(
-        children: [
-          Text(
-            'WORD',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 62.0,
-              fontFamily: 'kg_inimitable_original',
-              foreground: Paint()
-                ..style = PaintingStyle.stroke
-                ..color = Color(0xfffcC04A4A)
-                ..strokeWidth = 12,
-              shadows: [
-                Shadow(
-                  color: Color.fromARGB(251, 155, 11, 11).withOpacity(1.0),
-                  offset: Offset(11, 11),
-                  blurRadius: 5,
-                ),
-              ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    children: [
+                      Text(
+                        'WORD',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 62.0,
+                          fontFamily: 'kg_inimitable_original',
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..color = Color(0xfffcC04A4A)
+                            ..strokeWidth = 12,
+                          shadows: [
+                            Shadow(
+                              color: Color.fromARGB(251, 155, 11, 11)
+                                  .withOpacity(1.0),
+                              offset: Offset(11, 11),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        'WORD',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 62.0,
+                          fontFamily: 'kg_inimitable_original',
+                          color: Colors.white,
+                          // shadows: [
+                          //   // Shadow(
+                          //   //   color: Colors.black.withOpacity(0.5),
+                          //   //   offset: Offset(0, 0),
+                          //   //   blurRadius: 0,
+                          //   // ),
+                          // ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Stack(
+                    children: [
+                      Text(
+                        'WANDER',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 62.0,
+                          fontFamily: 'kg_inimitable_original',
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..color = Color(0xfffcC04A4A)
+                            ..strokeWidth = 12,
+                          shadows: [
+                            Shadow(
+                              color: Color.fromARGB(251, 155, 11, 11)
+                                  .withOpacity(1.0),
+                              offset: Offset(11, 11),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        'WANDER',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 62.0,
+                          fontFamily: 'kg_inimitable_original',
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.5),
+                              offset: Offset(0, 0),
+                              blurRadius: 0,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            'WORD',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 62.0,
-              fontFamily: 'kg_inimitable_original',
-              color: Colors.white,
-              // shadows: [
-              //   // Shadow(
-              //   //   color: Colors.black.withOpacity(0.5),
-              //   //   offset: Offset(0, 0),
-              //   //   blurRadius: 0,
-              //   // ),
-              // ],
-            ),
-          ),
-        ],
-      ),
-      SizedBox(height: 10),
-      Stack(
-        children: [
-          Text(
-            'WANDER',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 62.0,
-              fontFamily: 'kg_inimitable_original',
-              foreground: Paint()
-                ..style = PaintingStyle.stroke
-                ..color = Color(0xfffcC04A4A)
-                ..strokeWidth = 12,
-              shadows: [
-                Shadow(
-                  color: Color.fromARGB(251, 155, 11, 11).withOpacity(1.0),
-                  offset: Offset(11, 11),
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-          ),
-          Text(
-            'WANDER',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 62.0,
-              fontFamily: 'kg_inimitable_original',
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black.withOpacity(0.5),
-                  offset: Offset(0, 0),
-                  blurRadius: 0,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ],
-  ),
-),
             SizedBox(height: 60),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -280,7 +284,7 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
                     ],
                     borderRadius: BorderRadius.circular(20), // Rounded sides
                   ),
-                   child: ElevatedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -310,7 +314,7 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(height: 16),
                 // Button 3
                 Container(
@@ -327,7 +331,7 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                       Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EasyScoreboardScreen(),
@@ -357,7 +361,7 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
                 ),
                 SizedBox(height: 16),
                 // Button 4
-               Container(
+                Container(
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(

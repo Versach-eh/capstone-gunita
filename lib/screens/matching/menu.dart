@@ -22,7 +22,8 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
             borderRadius: BorderRadius.circular(20.0),
             side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
           ),
-          backgroundColor: Color(0xfffcFFF9E3), // Set your custom background color here
+          backgroundColor:
+              Color(0xfffcFFF9E3), // Set your custom background color here
           title: Text(
             'Are you sure you want to quit?',
             style: TextStyle(
@@ -89,7 +90,7 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Dismiss the dialog
-                    // You can add your quit logic here
+                    Navigator.of(context).pop(); // Return to the previous page
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(230, 50),
@@ -120,6 +121,7 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +151,8 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
                         ..strokeWidth = 12,
                       shadows: [
                         Shadow(
-                          color: Color.fromARGB(255, 22, 8, 148).withOpacity(1.0),
+                          color:
+                              Color.fromARGB(255, 22, 8, 148).withOpacity(1.0),
                           offset: Offset(11, 8),
                           blurRadius: 5,
                         ),
@@ -236,7 +239,7 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
                     ],
                     borderRadius: BorderRadius.circular(20), // Rounded sides
                   ),
-                   child: ElevatedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -266,7 +269,7 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(height: 16),
                 // Button 3
                 Container(
@@ -283,7 +286,7 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                       Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EasyScoreboardScreen(),
@@ -313,7 +316,7 @@ class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
                 ),
                 SizedBox(height: 16),
                 // Button 4
-               Container(
+                Container(
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
