@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/matching/easy_scoreboard.dart';
 import 'package:gunita20/screens/matching/medium_scoreboard.dart';
-import 'package:gunita20/screens/matching/menu.dart';
 import 'package:gunita20/screens/matching/rank_list.dart';
 import 'package:gunita20/services/firebase_service.dart';
 
@@ -15,14 +14,15 @@ class HardScoreboardScreen extends StatefulWidget {
 
 class _HardScoreboardScreenState extends State<HardScoreboardScreen> {
   List<int> topDurations = [];
+  List<Timestamp> topTimestamps = [];
 
   @override
   void initState() {
-    getAllTopDurations();
+    getAllPlaysData();
     super.initState();
   }
 
-  Future<void> getAllTopDurations() async {
+  Future<void> getAllPlaysData() async {
     try {
       final String userId = FirebaseService().user.uid;
 
@@ -36,6 +36,7 @@ class _HardScoreboardScreenState extends State<HardScoreboardScreen> {
       QuerySnapshot playsSnapshot = await ref.get();
 
       List<int> durations = [];
+      List<Timestamp> timestamps = [];
 
       playsSnapshot.docs.forEach((DocumentSnapshot doc) {
         Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -43,18 +44,21 @@ class _HardScoreboardScreenState extends State<HardScoreboardScreen> {
         if (data != null &&
             data.containsKey("duration") &&
             data.containsKey("difficulty") &&
+            data.containsKey("gameFinishedAt") &&
             data["difficulty"] == 2) {
           int duration = data["duration"] as int;
           durations.add(duration);
+          timestamps.add(data["gameFinishedAt"] as Timestamp);
         }
       });
 
-      // Sort the durations list in descending order
+      // Sort the lists in descending order
       durations.sort((a, b) => a.compareTo(b));
+      timestamps = List.from(timestamps)..sort((a, b) => b.compareTo(a));
 
       setState(() {
-        topDurations.clear();
         topDurations = durations;
+        topTimestamps = timestamps;
       });
     } catch (e) {
       print("Error: $e");
@@ -351,6 +355,7 @@ class _HardScoreboardScreenState extends State<HardScoreboardScreen> {
                           child: RankList(
                             rank: rank,
                             duration: duration,
+                            timestamp: topTimestamps[index],
                           ),
                         );
                       },

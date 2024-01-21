@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 
 class RankList extends StatefulWidget {
@@ -5,16 +6,40 @@ class RankList extends StatefulWidget {
     super.key,
     required this.rank,
     required this.duration,
+    required this.timestamp,
   });
 
   final int rank;
   final String duration;
+  final Timestamp timestamp;
 
   @override
   State<RankList> createState() => _RankListState();
 }
 
 class _RankListState extends State<RankList> {
+  String formatTimestamp(Timestamp timestamp) {
+    DateTime now = DateTime.now();
+    DateTime dateTime = timestamp.toDate();
+    Duration difference = now.difference(dateTime);
+
+    if (difference.inDays > 365) {
+      int years = (difference.inDays / 365).floor();
+      return '$years year${years != 1 ? 's' : ''} ago';
+    } else if (difference.inDays >= 30) {
+      int months = (difference.inDays / 30).floor();
+      return '$months month${months != 1 ? 's' : ''} ago';
+    } else if (difference.inDays >= 1) {
+      return '${difference.inDays} day${difference.inDays != 1 ? 's' : ''} ago';
+    } else if (difference.inHours >= 1) {
+      return '${difference.inHours} hour${difference.inHours != 1 ? 's' : ''} ago';
+    } else if (difference.inMinutes >= 1) {
+      return '${difference.inMinutes} minute${difference.inMinutes != 1 ? 's' : ''} ago';
+    } else {
+      return '${difference.inSeconds} second${difference.inSeconds != 1 ? 's' : ''} ago';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -24,7 +49,7 @@ class _RankListState extends State<RankList> {
         children: [
           Expanded(
             child: Container(
-              width: 220,
+              width: 75,
               height: 55,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -77,45 +102,34 @@ class _RankListState extends State<RankList> {
               ),
             ),
           ),
-          widget.rank <= 3
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: Container(
-                    width: 120,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color(0xfffcFFDE59),
-                    ),
-                    margin: EdgeInsets.only(left: 0),
-                    child: Stack(
-                      children: [
-                        if (widget.rank == 1)
-                          Positioned.fill(
-                            child: Image.asset(
-                              'assets/images/gold_scoreboard.png',
-                              fit: BoxFit.contain,
-                            ),
-                          )
-                        else if (widget.rank == 2)
-                          Positioned.fill(
-                            child: Image.asset(
-                              'assets/images/silver_scoreboard.png',
-                              fit: BoxFit.contain,
-                            ),
-                          )
-                        else if (widget.rank == 3)
-                          Positioned.fill(
-                            child: Image.asset(
-                              'assets/images/bronze_scoreboard.png',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                      ],
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Container(
+              width: 150,
+              height: 55,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Color(0xfffcFFDE59),
+              ),
+              margin: EdgeInsets.only(left: 0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      formatTimestamp(widget.timestamp),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'purple_smile',
+                      ),
                     ),
                   ),
-                )
-              : Container(),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

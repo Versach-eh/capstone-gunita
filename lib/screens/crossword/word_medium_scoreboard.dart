@@ -14,14 +14,15 @@ class MediumScoreboardScreen extends StatefulWidget {
 
 class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
   List<int> topDurations = [];
+  List<Timestamp> topTimestamps = [];
 
   @override
   void initState() {
-    getAllTopDurations();
+    getAllPlaysData();
     super.initState();
   }
 
-  Future<void> getAllTopDurations() async {
+  Future<void> getAllPlaysData() async {
     try {
       final String userId = FirebaseService().user.uid;
 
@@ -35,6 +36,7 @@ class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
       QuerySnapshot playsSnapshot = await ref.get();
 
       List<int> durations = [];
+      List<Timestamp> timestamps = [];
 
       playsSnapshot.docs.forEach((DocumentSnapshot doc) {
         Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -42,9 +44,11 @@ class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
         if (data != null &&
             data.containsKey("duration") &&
             data.containsKey("difficulty") &&
+            data.containsKey("gameFinishedAt") &&
             data["difficulty"] == 1) {
           int duration = data["duration"] as int;
           durations.add(duration);
+          timestamps.add(data["gameFinishedAt"] as Timestamp);
         }
       });
 
@@ -52,8 +56,8 @@ class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
       durations.sort((a, b) => a.compareTo(b));
 
       setState(() {
-        topDurations.clear();
         topDurations = durations;
+        topTimestamps = timestamps;
       });
     } catch (e) {
       print("Error: $e");
@@ -350,6 +354,7 @@ class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
                           child: RankList(
                             rank: rank,
                             duration: duration,
+                            timestamp: topTimestamps[index],
                           ),
                         );
                       },

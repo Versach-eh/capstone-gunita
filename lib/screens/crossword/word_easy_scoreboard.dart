@@ -14,14 +14,15 @@ class EasyScoreboardScreen extends StatefulWidget {
 
 class _EasyScoreboardScreenState extends State<EasyScoreboardScreen> {
   List<int> topDurations = [];
+  List<Timestamp> topTimestamps = [];
 
   @override
   void initState() {
-    getAllTopDurations();
+    getAllPlaysData();
     super.initState();
   }
 
-  Future<void> getAllTopDurations() async {
+  Future<void> getAllPlaysData() async {
     try {
       final String userId = FirebaseService().user.uid;
 
@@ -35,6 +36,7 @@ class _EasyScoreboardScreenState extends State<EasyScoreboardScreen> {
       QuerySnapshot playsSnapshot = await ref.get();
 
       List<int> durations = [];
+      List<Timestamp> timestamps = [];
 
       playsSnapshot.docs.forEach((DocumentSnapshot doc) {
         Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -42,18 +44,21 @@ class _EasyScoreboardScreenState extends State<EasyScoreboardScreen> {
         if (data != null &&
             data.containsKey("duration") &&
             data.containsKey("difficulty") &&
+            data.containsKey("gameFinishedAt") &&
             data["difficulty"] == 0) {
           int duration = data["duration"] as int;
           durations.add(duration);
+          timestamps.add(data["gameFinishedAt"] as Timestamp);
         }
       });
 
-      // Sort the durations list in descending order
+      // Sort the lists in descending order
       durations.sort((a, b) => a.compareTo(b));
+      timestamps = List.from(timestamps)..sort((a, b) => b.compareTo(a));
 
       setState(() {
-        topDurations.clear();
         topDurations = durations;
+        topTimestamps = timestamps;
       });
     } catch (e) {
       print("Error: $e");
@@ -350,6 +355,7 @@ class _EasyScoreboardScreenState extends State<EasyScoreboardScreen> {
                           child: RankList(
                             rank: rank,
                             duration: duration,
+                            timestamp: topTimestamps[index],
                           ),
                         );
                       },
