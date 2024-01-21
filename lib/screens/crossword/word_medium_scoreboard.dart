@@ -15,10 +15,15 @@ class MediumScoreboardScreen extends StatefulWidget {
 class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
   List<int> topDurations = [];
   List<Timestamp> topTimestamps = [];
+  bool isLoading = true;
 
   @override
   void initState() {
-    getAllPlaysData();
+    getAllPlaysData().then((_) {
+      setState(() {
+        isLoading = false;
+      });
+    });
     super.initState();
   }
 
@@ -300,64 +305,74 @@ class _MediumScoreboardScreenState extends State<MediumScoreboardScreen> {
             ),
             SizedBox(height: 50.0),
             Expanded(
-              child: topDurations.length == 0
-                  ? Center(
-                      child: Stack(
-                        children: [
-                          Text(
-                            'No scores yet. Start playing to compare your scores here.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontFamily: 'purple_smile',
-                              foreground: Paint()
-                                ..style = PaintingStyle.stroke
-                                ..color = Colors.black
-                                ..strokeWidth = 3,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withOpacity(1.0),
-                                  offset: Offset(0, 3),
-                                  blurRadius: 3,
+              child: !isLoading
+                  ? topDurations.length == 0
+                      ? Center(
+                          child: Stack(
+                            children: [
+                              Text(
+                                'No scores yet. Start playing to compare your scores here.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontFamily: 'purple_smile',
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..color = Colors.black
+                                    ..strokeWidth = 3,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withOpacity(1.0),
+                                      offset: Offset(0, 3),
+                                      blurRadius: 3,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            'No scores yet. Start playing to compare your scores here.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontFamily: 'purple_smile',
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withOpacity(0.5),
-                                  offset: Offset(0, 0),
-                                  blurRadius: 0,
+                              ),
+                              Text(
+                                'No scores yet. Start playing to compare your scores here.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontFamily: 'purple_smile',
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      offset: Offset(0, 0),
+                                      blurRadius: 0,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount:
-                          topDurations.length > 10 ? 10 : topDurations.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        int rank = index + 1;
-                        String duration = formatDuration(topDurations[index]);
+                        )
+                      : ListView.builder(
+                          itemCount: topDurations.length > 10
+                              ? 10
+                              : topDurations.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            int rank = index + 1;
+                            String duration =
+                                formatDuration(topDurations[index]);
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: RankList(
-                            rank: rank,
-                            duration: duration,
-                            timestamp: topTimestamps[index],
-                          ),
-                        );
-                      },
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: RankList(
+                                rank: rank,
+                                duration: duration,
+                                timestamp: topTimestamps[index],
+                              ),
+                            );
+                          },
+                        )
+                  : Center(
+                      child: CircularProgressIndicator(
+                        strokeCap: StrokeCap.round,
+                        strokeWidth: 8,
+                        color: Color(0xfffcE17612),
+                      ),
                     ),
             ),
           ],

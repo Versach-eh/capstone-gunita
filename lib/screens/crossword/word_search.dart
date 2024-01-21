@@ -12,15 +12,15 @@ class WordSearchPuzzleGenerator {
   final List<List<String>> grid;
   final Random _random = Random();
 
-  WordSearchPuzzleGenerator({
-    required this.words,
-    required this.grid,
-  }) : gridSize = 8; // Set gridSize to 8
+  WordSearchPuzzleGenerator(
+      {required this.words,
+      required this.grid,
+      required this.gridSize}); // Set gridSize to 8
 
   List<List<String>> generatePuzzle() {
     // Initialize the grid with random letters
     for (int row = 0; row < gridSize; row++) {
-      for (int col = 0; col < 10; col++) {
+      for (int col = 0; col < gridSize + 2; col++) {
         grid[row][col] =
             String.fromCharCode(_random.nextInt(26) + 'A'.codeUnitAt(0));
       }
@@ -94,8 +94,10 @@ class WordSearchPuzzleGenerator {
 
 class WordSearchScreen extends StatefulWidget {
   final List<String> enteredWords;
+  final int difficulty;
 
-  const WordSearchScreen({Key? key, required this.enteredWords})
+  const WordSearchScreen(
+      {Key? key, required this.enteredWords, required this.difficulty})
       : super(key: key);
 
   @override
@@ -115,6 +117,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
   String currentWord = '';
   DateTime startTime = DateTime.now();
   Duration get gameTime => DateTime.now().difference(startTime);
+  int gridSize = 8;
 
   @override
   void initState() {
@@ -126,14 +129,35 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
   }
 
   void initializePuzzle() {
+    switch (widget.difficulty) {
+      case 1:
+        setState(() {
+          gridSize = 10;
+        });
+
+        break;
+      case 2:
+        setState(() {
+          gridSize = 12;
+        });
+        break;
+      default:
+        setState(() {
+          gridSize = 8;
+        });
+        break;
+    }
+
     final generator = WordSearchPuzzleGenerator(
-      words: widget.enteredWords,
-      grid: List.generate(8, (index) => List<String>.filled(10, '')),
-    );
+        words: widget.enteredWords,
+        grid: List.generate(
+            gridSize, (index) => List<String>.filled(gridSize + 2, '')),
+        gridSize: gridSize);
     puzzleGrid = generator.generatePuzzle();
-    highlightedCells =
-        List.generate(8, (index) => List<bool>.filled(10, false));
-    correctCells = List.generate(8, (index) => List<bool>.filled(10, false));
+    highlightedCells = List.generate(
+        gridSize, (index) => List<bool>.filled(gridSize + 2, false));
+    correctCells = List.generate(
+        gridSize, (index) => List<bool>.filled(gridSize + 2, false));
   }
 
   void onCellTap(int row, int col) {
@@ -244,9 +268,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
         "gameFinishedAt": FieldValue.serverTimestamp(),
         "duration": gameTime.inSeconds,
         "wordsPlayed": widget.enteredWords,
-        "difficulty":
-            0 // 0 for easy, 1 for medium, 2 for hard. For now, it's explicitly set to easy since other difficulties haven't been implemented for this game.
-        //TODO: add other difficulties for this game
+        "difficulty": widget.difficulty // 0 for easy, 1 for medium, 2 for hard
       });
     } catch (e) {
       print("Error adding game data to Firestore: $e");
@@ -754,6 +776,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                           child: Text(
                             'Time: ${formatDuration(Duration(seconds: secondsElapsed))}',
                             style: TextStyle(
+                              fontFamily: "purple_smile",
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -765,17 +788,17 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                         child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 8,
+                            crossAxisCount: gridSize,
                             crossAxisSpacing: 1.0,
                             mainAxisSpacing: 1.0,
                           ),
-                          itemCount: 8 * 10,
+                          itemCount: gridSize * (gridSize + 2),
                           itemBuilder: (context, index) {
-                            final row = index ~/ 10;
-                            final col = index % 10;
+                            final row = index ~/ (gridSize + 2);
+                            final col = index % (gridSize + 2);
 
-                            final cellSize =
-                                MediaQuery.of(context).size.width / 10;
+                            final cellSize = MediaQuery.of(context).size.width /
+                                (gridSize + 2);
 
                             return GestureDetector(
                               onTap: () => onCellTap(row, col),
@@ -795,7 +818,9 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                                   child: Text(
                                     puzzleGrid[row][col],
                                     style: TextStyle(
-                                      fontSize: 26,
+                                      fontFamily: "purple_smile",
+                                      fontSize:
+                                          widget.difficulty == 2 ? 18 : 24,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

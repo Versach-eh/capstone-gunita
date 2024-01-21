@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gunita20/screens/crossword/word_search.dart';
 import 'package:flutter/services.dart';
 
-
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -17,7 +16,12 @@ class UpperCaseTextFormatter extends TextInputFormatter {
 }
 
 class EnterWordScreen extends StatefulWidget {
-  const EnterWordScreen({Key? key}) : super(key: key);
+  const EnterWordScreen(
+      {Key? key, required this.maxAllowedWords, required this.difficulty})
+      : super(key: key);
+
+  final int maxAllowedWords;
+  final int difficulty;
 
   @override
   _EnterWordScreenState createState() => _EnterWordScreenState();
@@ -27,10 +31,8 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
   TextEditingController _wordController = TextEditingController();
   List<String> enteredWords = [];
   bool isWordLimitReached() {
-  return enteredWords.length >= 4;
-}
-
-
+    return enteredWords.length >= widget.maxAllowedWords;
+  }
 
   void _showLimitReachedDialog() {
     showDialog(
@@ -55,7 +57,7 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "You have reached the limit of 4 words.",
+                "You have reached the limit of ${widget.maxAllowedWords} words.",
                 style: TextStyle(
                   fontSize: 24.0,
                   fontFamily: 'Magdelin',
@@ -187,83 +189,85 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
       },
     );
   }
+
   void _showWordLimitDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
-        ),
-        backgroundColor: Color(0xfffcFFF9E3),
-        title: Text(
-          'WORD LIMIT NOT REACHED',
-          style: TextStyle(
-            fontFamily: 'kg_inimitable_original',
-            fontSize: 28.0,
-            color: Colors.black,
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
           ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              "You haven't entered 4 words yet.",
-              style: TextStyle(
-                fontSize: 24.0,
-                fontFamily: 'Magdelin',
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+          backgroundColor: Color(0xfffcFFF9E3),
+          title: Text(
+            'WORD LIMIT NOT REACHED',
+            style: TextStyle(
+              fontFamily: 'kg_inimitable_original',
+              fontSize: 28.0,
+              color: Colors.black,
             ),
-            SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(10, 46, 125, 50).withOpacity(1.0),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    offset: Offset(0, 6),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(20),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                "You haven't entered ${widget.maxAllowedWords} words yet.",
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontFamily: 'Magdelin',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(230, 50),
-                  primary: Color(0xffc36C655),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
+              SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(10, 46, 125, 50)
+                          .withOpacity(1.0),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Dismiss the dialog
+                  },
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(230, 50),
+                    primary: Color(0xffc36C655),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: Colors.white,
+                        width: 3.0,
+                      ),
+                    ),
+                    shadowColor: Colors.green.shade800.withOpacity(0.8),
+                    elevation: 5,
+                  ),
+                  child: Text(
+                    "Okay",
+                    style: TextStyle(
+                      fontFamily: 'purple_smile',
                       color: Colors.white,
-                      width: 3.0,
+                      fontSize: 24.0,
                     ),
                   ),
-                  shadowColor: Colors.green.shade800.withOpacity(0.8),
-                  elevation: 5,
-                ),
-                child: Text(
-                  "Okay",
-                  style: TextStyle(
-                    fontFamily: 'purple_smile',
-                    color: Colors.white,
-                    fontSize: 24.0,
-                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -393,8 +397,10 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                       child: TextFormField(
                         controller: _wordController,
                         inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r'[^a-zA-Z]')), // Allow only alphabetic characters
-                          LengthLimitingTextInputFormatter(10), // Limit the length to 10 characters
+                          FilteringTextInputFormatter.deny(RegExp(
+                              r'[^a-zA-Z]')), // Allow only alphabetic characters
+                          LengthLimitingTextInputFormatter(
+                              10), // Limit the length to 10 characters
                           UpperCaseTextFormatter(), // Convert input to uppercase
                         ],
                         decoration: InputDecoration(
@@ -417,7 +423,8 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                           suffixIcon: GestureDetector(
                             onTap: () {
                               setState(() {
-                                if (enteredWords.length < 4) {
+                                if (enteredWords.length <
+                                    widget.maxAllowedWords) {
                                   String newWord = _wordController.text;
                                   if (!enteredWords.contains(newWord)) {
                                     enteredWords.add(newWord);
@@ -439,9 +446,6 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                         ),
                       ),
                     ),
-
-
-
                     SizedBox(height: 20.0),
                     Stack(
                       children: [
@@ -485,52 +489,65 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                     SizedBox(height: 10.0),
                     Column(
                       children: [
-                        for (String word in enteredWords)
-                          Column(
-                            children: [
-                              Container(
-                                width: 300.0,
-                                height: 60.0,
-                                margin: EdgeInsets.only(bottom: 10.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 3.0,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                                minHeight: 20,
+                                maxHeight:
+                                    MediaQuery.of(context).size.height / 2.5),
+                            child: ListView.builder(
+                              itemCount: enteredWords.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                String word = enteredWords[index];
+
+                                return Container(
+                                  width: 300.0,
+                                  height: 60.0,
+                                  margin: EdgeInsets.only(bottom: 10.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 3.0,
+                                    ),
                                   ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 10.0),
-                                        child: Text(
-                                          word,
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontFamily: 'kg_inimitable_original',
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10.0),
+                                          child: Text(
+                                            word,
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontFamily:
+                                                  'kg_inimitable_original',
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: IconButton(
-                                        icon: Icon(Icons.close),
-                                        onPressed: () {
-                                          setState(() {
-                                            enteredWords.remove(word);
-                                          });
-                                        },
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: () {
+                                            setState(() {
+                                              enteredWords.remove(word);
+                                            });
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
+                        ),
                         SizedBox(height: 30),
                         // NEXT BUTTON
                         Container(
@@ -549,16 +566,17 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                             onPressed: () {
                               if (isWordLimitReached()) {
                                 // Proceed to the next screen only if 4 words have been entered
-                                if (enteredWords.toSet().length == enteredWords.length) {
+                                if (enteredWords.toSet().length ==
+                                    enteredWords.length) {
                                   // No repeated words, navigate to the next screen
-                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => WordSearchScreen(
-                                      enteredWords: enteredWords,
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => WordSearchScreen(
+                                        enteredWords: enteredWords,
+                                        difficulty: widget.difficulty,
+                                      ),
                                     ),
-                                  ),
-                                );
-
+                                  );
                                 } else {
                                   // Show a notification for repeated words
                                   _showDuplicateWordDialog();
@@ -568,7 +586,6 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                                 _showWordLimitDialog();
                               }
                             },
-
                             style: ElevatedButton.styleFrom(
                               fixedSize: Size(300, 50),
                               primary: Color(0xffc36C655),
