@@ -17,11 +17,23 @@ class _ReminderScreenState extends State<ReminderScreen> {
   TextEditingController _descriptionController = TextEditingController();
   DateTime? selectedDateFromDetails;
   TimeOfDay? selectedTimeFromDetails;
-  Category? selectedCategory;
+  List<Category>? selectedCategory;
 
   Future<void> addReminderToFirestore() async {
     try {
       final String userId = FirebaseService().user.uid;
+
+      List<Map<String, dynamic>> categoryDataList = [];
+
+      if (selectedCategory != null) {
+        for (Category category in selectedCategory!) {
+          categoryDataList.add({
+            'name': category.name,
+            'color':
+                "0x${category.color.value.toRadixString(16)}", // Store color as an integer
+          });
+        }
+      }
 
       await FirebaseFirestore.instance
           .collection("Users")
@@ -33,7 +45,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
         "description": _descriptionController.text,
         "date": selectedDateFromDetails,
         "time": selectedTimeFromDetails!.format(context),
-        "category": selectedCategory?.name ?? "",
+        "categories": categoryDataList,
         "isFinished": false,
       });
     } catch (e) {
@@ -221,12 +233,14 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   ),
                 );
 
-                if (result != null && result.containsKey('selectedCategory')) {
-                  Category? selectedCategory =
-                      result['selectedCategory'] as Category?;
+                if (result != null) {
+                  List<Category>? selectedCategory =
+                      result['selectedCategory'] as List<Category>?;
                   setState(() {
                     this.selectedCategory = selectedCategory;
                   });
+
+                  print('Selected Categories: $selectedCategory');
                 }
                 // Handle the case where 'selectedCategory' is null if no category is selected
                 else {
@@ -242,16 +256,50 @@ class _ReminderScreenState extends State<ReminderScreen> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  selectedCategory != null
-                      ? selectedCategory!.name
-                      : 'Add category',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontFamily: 'Magdelin',
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                      selectedCategory != null && selectedCategory!.isNotEmpty
+                          ? selectedCategory!.map((category) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    margin: const EdgeInsets.only(right: 8.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: category.color,
+                                    ),
+                                  ),
+                                  Text(
+                                    category.name,
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontFamily: 'Magdelin',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              );
+                            }).toList()
+                          : [
+                              Text(
+                                'Add category',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontFamily: 'Magdelin',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                 ),
               ),
             ),
@@ -293,19 +341,15 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   child: Text(
                     'Save',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 18.0,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    backgroundColor: Colors.deepPurple,
                     fixedSize: Size(150, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
                     ),
                   ),
                 ),

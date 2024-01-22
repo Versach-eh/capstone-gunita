@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gunita20/services/firebase_service.dart';
 
 class NewCategoryScreen extends StatefulWidget {
-  final VoidCallback resetNewCategory;
-  final Function(Map<String, dynamic>) onCategorySaved;
-
-  const NewCategoryScreen({
-    Key? key,
-    required this.resetNewCategory,
-    required this.onCategorySaved,
-  }) : super(key: key);
+  const NewCategoryScreen({Key? key}) : super(key: key);
 
   @override
   _NewCategoryScreenState createState() => _NewCategoryScreenState();
@@ -19,10 +14,10 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
 
   List<Color> colorChoices = [
     Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.yellow,
-    Colors.purple,
+    Colors.blueAccent,
+    Colors.lightGreen,
+    Colors.yellowAccent,
+    Colors.deepPurple,
   ];
 
   Color selectedColor = Colors.red; // Default color
@@ -33,32 +28,40 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
     super.dispose();
   }
 
-  void onSaveButtonPressed() {
-    // Get the category name and color from the text field and selected color
-    String categoryName = _titleController.text;
-    Color categoryColor = selectedColor;
+  Future<void> onSaveButtonPressed() async {
+    try {
+      final String userId = FirebaseService().user.uid;
 
-    // Pass the category name and color back to the previous screen
-    Map<String, dynamic> result = {
-      'categoryName': categoryName,
-      'categoryColor': categoryColor,
-    };
+      // Get the category name and color from the text field and selected color
+      String categoryName = _titleController.text;
+      String categoryColor = selectedColor.value.toRadixString(16);
 
-    widget.onCategorySaved(result);
-    widget
-        .resetNewCategory(); // Call the reset method before popping the screen
-    Navigator.pop(context, result);
+      // Save the new category to Firestore
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("categories")
+          .add({
+        "name": categoryName,
+        "color": "0x$categoryColor",
+      });
+
+      // Navigate back to the previous screen
+      Navigator.pop(context);
+    } catch (e) {
+      print("Error saving category to Firestore: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(40.0),
         children: [
           SizedBox(height: 80),
           Text(
-            'Choose category.',
+            'Add a New Category',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 28.0,
@@ -150,9 +153,6 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Handle Back button press
-                    widget
-                        .resetNewCategory(); // Call the reset method before popping the screen
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -180,19 +180,15 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
                   child: Text(
                     'Save',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 18.0,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    primary: Colors.deepPurple,
                     fixedSize: Size(150, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
                     ),
                   ),
                 ),
