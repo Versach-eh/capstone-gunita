@@ -81,62 +81,100 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ),
               ),
               SizedBox(height: 80),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  Category category = categories[index];
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: BorderDirectional(bottom: BorderSide(width: 1)),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        // Toggle the checkbox state when InkWell is tapped
-                        setState(() {
-                          selectedCategoryStates[category.name] =
-                              !(selectedCategoryStates[category.name] ?? false);
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Transform.scale(
-                              scale: 1.3,
-                              child: Checkbox(
-                                value: selectedCategoryStates[category.name] ??
-                                    false,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedCategoryStates[category.name] =
-                                        value!;
-                                  });
-                                },
-                                fillColor:
-                                    MaterialStatePropertyAll(category.color),
-                                activeColor: category.color,
-                                shape: CircleBorder(),
-                                side: BorderSide.none,
-                                splashRadius: 10,
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                category.name,
-                                style: TextStyle(
-                                    fontSize: 20, fontFamily: 'Magdelin'),
-                              ),
-                            ),
-                          ],
+              categories.isEmpty
+                  ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 5,
+                      child: Center(
+                        child: Text(
+                          "You don't have any categories",
+                          style:
+                              TextStyle(fontFamily: 'Magdelin', fontSize: 20),
+                          textAlign: TextAlign.center,
                         ),
                       ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        Category category = categories[index];
+
+                        return Dismissible(
+                          key: Key(category.name),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) async {
+                            await _deleteCategory(category);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('${category.name} deleted'),
+                            ));
+                            setState(() {
+                              categories.removeAt(index);
+                            });
+                          },
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            color: Colors.red,
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: BorderDirectional(
+                                  bottom: BorderSide(width: 1)),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                // Toggle the checkbox state when InkWell is tapped
+                                setState(() {
+                                  selectedCategoryStates[category.name] =
+                                      !(selectedCategoryStates[category.name] ??
+                                          false);
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Transform.scale(
+                                      scale: 1.3,
+                                      child: Checkbox(
+                                        value: selectedCategoryStates[
+                                                category.name] ??
+                                            false,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedCategoryStates[
+                                                category.name] = value!;
+                                          });
+                                        },
+                                        fillColor: MaterialStatePropertyAll(
+                                            category.color),
+                                        activeColor: category.color,
+                                        shape: CircleBorder(),
+                                        side: BorderSide.none,
+                                        splashRadius: 10,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        category.name,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: 'Magdelin'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
               SizedBox(height: 100),
               Container(
                 alignment: Alignment.bottomRight,
@@ -241,6 +279,25 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     // Return the data to the previous screen
     Navigator.pop(context, data);
+  }
+
+  Future<void> _deleteCategory(Category category) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("categories")
+          .where("name", isEqualTo: category.name)
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          doc.reference.delete();
+        });
+      });
+    } catch (e) {
+      print("Error deleting category: $e");
+    }
   }
 
   void resetNewCategory() {

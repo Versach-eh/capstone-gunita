@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gunita20/screens/album/album_screen.dart';
 import 'package:gunita20/screens/gamelibrary_screen.dart';
 import 'package:gunita20/screens/reminders/category.dart';
+import 'package:gunita20/screens/reminders/category_reminder_list.dart';
 import 'package:gunita20/screens/reminders/completed_screen.dart';
 import 'package:gunita20/screens/reminders/unresolved_screen.dart';
 import 'package:gunita20/screens/reminders/week_screen.dart';
@@ -28,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int onThisWeekQuantity = 0;
   int unresolvedQuantity = 0;
   int completedQuantity = 0;
+  List<String> categoryNames = [];
+  List<String> categoryColors = [];
 
   late StreamController<int> onThisDayQuantityController;
   late StreamController<int> onThisWeekQuantityController;
@@ -45,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     fetchReminderQuantities().then((value) {
+      fetchCategories();
       initializeStreams();
       setState(() {
         isLoading = false;
@@ -116,6 +120,40 @@ class _HomeScreenState extends State<HomeScreen> {
           .snapshots()
           .listen((QuerySnapshot snapshot) {
         completedQuantityController.add(snapshot.size);
+      });
+    } catch (e) {
+      print("Error fetching reminders: $e");
+    }
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      QuerySnapshot categoriesSnapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("categories")
+          .get();
+
+      List<String> names = [];
+      List<String> colors = [];
+
+      categoriesSnapshot.docs.forEach((DocumentSnapshot doc) {
+        Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String name = data["name"];
+          String color = data["color"];
+
+          names.add(name);
+          colors.add(color);
+        }
+      });
+
+      setState(() {
+        categoryNames = names;
+        categoryColors = colors;
       });
     } catch (e) {
       print("Error fetching reminders: $e");
@@ -198,6 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
         key: _refreshIndicatorKey,
         onRefresh: () async {
           await fetchReminderQuantities();
+          await fetchCategories();
         },
         strokeWidth: 4,
         child: isLoading
@@ -444,6 +483,81 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  categoryNames.isEmpty
+                      ? SizedBox()
+                      : Padding(
+                          padding: const EdgeInsets.fromLTRB(28, 40, 28, 10),
+                          child: Text(
+                            "Your Categories",
+                            style: TextStyle(
+                                fontFamily: 'Magdelin',
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                  categoryNames.isEmpty
+                      ? SizedBox()
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: ListView.builder(
+                                itemCount: categoryNames.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                CategoryReminderScreen(
+                                              category: categoryNames[index],
+                                            ),
+                                          ),
+                                        ),
+                                        child: Container(
+                                          decoration: ShapeDecoration(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12))),
+                                            color: Color(int.parse(
+                                                categoryColors[index])),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 12),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons
+                                                    .label_outline_rounded),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text(categoryNames[index]),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                    ],
+                                  );
+                                  // return ElevatedButton.icon(
+                                  //     onPressed: () {},
+                                  //     style: ButtonStyle(
+                                  //       foregroundColor:
+                                  //           MaterialStatePropertyAll(Colors.black),
+                                  //       backgroundColor: MaterialStatePropertyAll(
+                                  //           Color(int.parse(categoryColors[index]))),
+                                  //     ),
+                                  //     icon: Icon(Icons.label_rounded),
+                                  //     label: Text(categoryNames[index]));
+                                }),
+                          ),
+                        ),
                   // Positioned(
                   //   bottom: 30,
                   //   right: 20,

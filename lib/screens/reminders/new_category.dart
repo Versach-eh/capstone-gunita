@@ -33,24 +33,73 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
       final String userId = FirebaseService().user.uid;
 
       // Get the category name and color from the text field and selected color
-      String categoryName = _titleController.text;
+      String categoryName = _titleController.text.trim();
       String categoryColor = selectedColor.value.toRadixString(16);
 
-      // Save the new category to Firestore
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(userId)
-          .collection("categories")
-          .add({
-        "name": categoryName,
-        "color": "0x$categoryColor",
-      });
+      // Check if the category name already exists in Firestore
+      bool categoryExists = await _checkIfCategoryExists(userId, categoryName);
 
-      // Navigate back to the previous screen
-      Navigator.pop(context);
+      if (categoryExists) {
+        // Show a dialog if the category already exists
+        _showCategoryExistsDialog();
+      } else {
+        // Save the new category to Firestore
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userId)
+            .collection("categories")
+            .add({
+          "name": categoryName,
+          "color": "0x$categoryColor",
+        });
+
+        // Navigate back to the previous screen
+        Navigator.pop(context);
+      }
     } catch (e) {
       print("Error saving category to Firestore: $e");
     }
+  }
+
+  Future<bool> _checkIfCategoryExists(
+      String userId, String categoryName) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("categories")
+          .where("name", isEqualTo: categoryName)
+          .get();
+
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print("Error checking if category exists: $e");
+      return false;
+    }
+  }
+
+  void _showCategoryExistsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Category Already Exists'),
+          content: Text(
+              'A category with the same name already exists. Please name a different one.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

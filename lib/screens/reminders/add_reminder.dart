@@ -22,35 +22,89 @@ class _ReminderScreenState extends State<ReminderScreen> {
   Future<void> addReminderToFirestore() async {
     try {
       final String userId = FirebaseService().user.uid;
+      String title = _titleController.text.trim();
 
-      List<Map<String, dynamic>> categoryDataList = [];
+      // Check if the title already exists in Firestore
+      bool titleExists = await _checkIfTitleExists(userId, title);
 
-      if (selectedCategory != null) {
-        for (Category category in selectedCategory!) {
-          categoryDataList.add({
-            'name': category.name,
-            'color':
-                "0x${category.color.value.toRadixString(16)}", // Store color as an integer
-          });
+      if (titleExists) {
+        // Show a dialog if the title already exists
+        _showTitleExistsDialog();
+      } else {
+        List<Map<String, dynamic>> categoryDataList = [];
+
+        if (selectedCategory != null) {
+          for (Category category in selectedCategory!) {
+            categoryDataList.add({
+              'name': category.name,
+              'color': "0x${category.color.value.toRadixString(16)}",
+            });
+          }
         }
-      }
 
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(userId)
-          .collection("reminders")
-          .add({
-        "reminderCreatedAt": FieldValue.serverTimestamp(),
-        "title": _titleController.text,
-        "description": _descriptionController.text,
-        "date": selectedDateFromDetails,
-        "time": selectedTimeFromDetails!.format(context),
-        "categories": categoryDataList,
-        "isFinished": false,
-      });
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userId)
+            .collection("reminders")
+            .add({
+          "reminderCreatedAt": FieldValue.serverTimestamp(),
+          "title": title,
+          "description": _descriptionController.text,
+          "date": selectedDateFromDetails,
+          "time": selectedTimeFromDetails!.format(context),
+          "categories": categoryDataList,
+          "isFinished": false,
+        });
+
+        // Optionally, you can clear the text controllers after adding the reminder
+        _titleController.clear();
+        _descriptionController.clear();
+
+        Navigator.pop(context);
+      }
     } catch (e) {
       print("Error adding reminder to Firestore: $e");
     }
+  }
+
+  Future<bool> _checkIfTitleExists(String userId, String title) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("reminders")
+          .where("title", isEqualTo: title)
+          .get();
+
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print("Error checking if title exists: $e");
+      return false;
+    }
+  }
+
+  void _showTitleExistsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Reminder Already Exists'),
+          content: Text(
+              'A reminder with the same title already exists. Please name a different one.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showCancelDialog() {
@@ -336,7 +390,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     await addReminderToFirestore();
-                    Navigator.pop(context);
                   },
                   child: Text(
                     'Save',
