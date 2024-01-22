@@ -1,13 +1,10 @@
-  // Proper congratulation and paused timer when puzzle complete (prints accurate time & format)
-  // modern looking timer
-  // dark background
-  // working pause timer
-  // working restart button
-  // with confirmation dialogues
-  // no overflowing
+  // record_score is currently off (commented out)
+  // sound button not functional
 
-  // non functional pause menu
-  // no congratulations and time saving
+  // no proper database record
+  // need to create database scoreboard per game and difficulty
+  // Users > userID > Scoreboard > Jigsaw > Easy/Moderate/Hard > [scores]
+
 
   // keywords:
   // touchdown = correct piece
@@ -19,6 +16,7 @@
   import 'dart:ui';
   import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
   import 'package:flutter/material.dart';
   import 'package:flutter/rendering.dart';
@@ -30,6 +28,8 @@ import 'package:gunita20/services/firebase_service.dart';
   import 'package:audioplayers/audioplayers.dart';
   import 'package:image_picker/image_picker.dart';
   import 'dart:async';
+  import 'package:gunita20/ui/widgets/game_confetti.dart';
+
   
 
 
@@ -46,6 +46,8 @@ import 'package:gunita20/services/firebase_service.dart';
 
 
   class _PuzzleWidgetHardState extends State<PuzzleWidgetHard> {
+    // Create a ConfettiController
+  ConfettiController _confettiController = ConfettiController();
   //   final User? currentUser;
   // final Difficulty difficulty;
         final FirebaseService firebaseService = FirebaseService();
@@ -70,6 +72,7 @@ import 'package:gunita20/services/firebase_service.dart';
     bool _showQuitDialog = false;
 
     late Timer _timer;
+    final controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
     GlobalKey<_JigsawWidgetState> jigKey = new GlobalKey<_JigsawWidgetState>();
     
@@ -125,6 +128,8 @@ import 'package:gunita20/services/firebase_service.dart';
       final Difficulty difficulty = Difficulty(id: difficultyId, scoresTimerValues: [] , );
       firebaseService.addScore(difficulty);
 
+      // firebaseService.addScoreToList(id, scoresTimerValues);
+
       // await FirebaseFirestore.instance.collection('Users/${firebaseService.user.uid}/Scoreboard/Jigsaw').doc('easy').update({
       //   'timerValues': FieldValue.arrayUnion([_timerValue]),
       // });
@@ -175,7 +180,8 @@ import 'package:gunita20/services/firebase_service.dart';
               children: [
                 Column(
                   children: [
-                    SizedBox(height: 37),
+                    
+                    SizedBox(height: 37),       // space on top of timer
                     if (_isJigsawStarted)
                       Container(
                         alignment: Alignment.center,
@@ -186,15 +192,15 @@ import 'package:gunita20/services/firebase_service.dart';
                             setState(() {
                               _timerValue = timerValue;
                             });
-                            _recordScore(); // failed (create a doc for every)
+                            // _recordScore(); // failed (create a doc for every)
                           },
                           ),
                       ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(9.0),
+                        padding: const EdgeInsets.fromLTRB(9.0,0,9.0,0),
                         child: JigsawWidget(
-                          callbackFinish: () {
+                          callbackFinish: () {      // things it will do when puzzle is complete
                         setState(() {
                           _isPuzzleComplete = true;
                            _isGamePaused = true;
@@ -202,6 +208,8 @@ import 'package:gunita20/services/firebase_service.dart';
                           
                           
                         });
+                        controllerCenter.play();
+                        
                         Future.delayed(Duration(seconds: 1), () {
                           setState(() {
                             _isPuzzleComplete = false;
@@ -214,14 +222,14 @@ import 'package:gunita20/services/firebase_service.dart';
                       key: jigKey,
                       child: _selectedImage != null
                           ? Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding: const EdgeInsets.all(8.0), // border of jigsaw
                               child: Image.file(
                                 _selectedImage!,
-                                fit: BoxFit.contain,
+                                fit: BoxFit.cover,
                               ),
                             )
                           : Image.asset(
-          'assets/images/kris.jpg',
+          'assets/images/default.jpg',
           fit: BoxFit.cover,
         ),
                         ),
@@ -232,6 +240,7 @@ import 'package:gunita20/services/firebase_service.dart';
                         child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        
                         Container(
                     decoration: BoxDecoration(
                       boxShadow: [
@@ -321,7 +330,7 @@ import 'package:gunita20/services/firebase_service.dart';
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color.fromARGB(255, 75, 78, 75).withOpacity(1.0),
+                          color: Colors.green.shade800.withOpacity(1.0),
                           spreadRadius: 1,
                           blurRadius: 1,
                           offset: Offset(0, 6),
@@ -358,23 +367,10 @@ import 'package:gunita20/services/firebase_service.dart';
                     ),
                   ),
 
-                  
+                  SizedBox(height: 20.0,) // space at the bottom of bottom buttons 
                       ],
                     ),
                       ),
-                      
-                    // AnimatedOpacity(
-                    //   opacity: _isPuzzleComplete ? 1.0 : 0.0,
-                    //   duration: Duration(milliseconds: 500),
-                    //   child: Text(
-                    //     "Congratulations, Puzzle Done!",
-                    //     style: TextStyle(
-                    //       color: Colors.white,
-                    //       fontSize: 20,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   ),
-                    // ),
                     
                   ],
                 ),
@@ -401,6 +397,21 @@ import 'package:gunita20/services/firebase_service.dart';
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                                                ConfettiWidget(
+            confettiController: controllerCenter,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            gravity: 0.5,
+            emissionFrequency: 0.03,
+            numberOfParticles: 20,
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange,
+              Colors.purple,
+            ],
+          ),
                         Text(
                           "Congratulations!\nYour Score is\n${_formatTime(_timerValue)}",
                           style: TextStyle(
@@ -414,6 +425,8 @@ import 'package:gunita20/services/firebase_service.dart';
 
 
                         SizedBox(height: 5),
+
+
 
 
 
@@ -487,8 +500,12 @@ import 'package:gunita20/services/firebase_service.dart';
                        child: ElevatedButton(
                       onPressed: () {
                             setState(() {
-                            // _showRestartDialog = false;
-                            // apply quit page nav to start menu here
+                            Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JigsawMenuScreen(),
+                        ),
+                      );
                             
                           });
                           },
@@ -980,17 +997,9 @@ import 'package:gunita20/services/firebase_service.dart';
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      SizedBox(height: 3), // for top of pause button
+                      SizedBox(height: 5), // for top of pause button
                       Row(
                         children: [
-                        //   ElevatedButton(
-                          // onPressed: () {
-                          //   if (_selectedImage != null) {
-                          //     _showImagePreview(context, _selectedImage!);
-                          //   }
-                          // },
-                        //   child: Text('Show Preview'),
-                        // ),
 
                         Container(
                             // padding: EdgeInsets.all(1),
@@ -1014,7 +1023,7 @@ import 'package:gunita20/services/firebase_service.dart';
                                     height: 300,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: AssetImage('assets/images/kris.jpg'),
+                                        image: AssetImage('assets/images/default.jpg'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -1084,7 +1093,7 @@ import 'package:gunita20/services/firebase_service.dart';
                           ),
                         ],
                       ),
-                      
+                      // SizedBox(height: 3,)
                     ],
                   ),
                   ),
@@ -1145,7 +1154,7 @@ class _TimerWidgetState extends State<TimerWidget> {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(
-        vertical: 10,
+        vertical: 20, // adjusted for space between top buttons and timer
         horizontal: 16,
       ),
       elevation: 8,
@@ -1520,7 +1529,7 @@ resetJigsaw() {
                             RepaintBoundary(
                               key: _globalKey,
                               child: Container(
-                                color: Color.fromARGB(255, 125, 60, 179),
+                                color: Color.fromARGB(255, 74, 179, 60), //color of jigsaw border
                                 height: double.maxFinite,
                                 width: double.maxFinite,
                                 child: widget.child,

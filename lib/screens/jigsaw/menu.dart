@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:gunita20/screens/gamelibrary_screen.dart';
+import 'package:gunita20/screens/gamelibrary_screen.dart';
+import 'package:gunita20/screens/jigsaw/easy_scoreboard.dart';
 import 'package:gunita20/screens/jigsaw/instruction.dart';
 import 'package:gunita20/screens/jigsaw/jigsaw_difficulty.dart';
-import 'package:gunita20/screens/jigsaw/easy_scoreboard.dart';
-// import 'package:gunita20/screens/jigsaw/jigzaw_easy.dart';
+import 'package:gunita20/screens/jigsaw/jigzaw_easy.dart';
+
 
 class JigsawMenuScreen extends StatefulWidget {
   const JigsawMenuScreen({Key? key}) : super(key: key);
@@ -23,8 +24,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
             borderRadius: BorderRadius.circular(20.0),
             side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
           ),
-          backgroundColor:
-              Color(0xfffcFFF9E3), // Set your custom background color here
+          backgroundColor: Color(0xfffcFFF9E3), // Set your custom background color here
           title: Text(
             'Are you sure you want to quit?',
             style: TextStyle(
@@ -92,8 +92,14 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                   onPressed: () {
                     // Navigator.of(context).pop(); // Dismiss the dialog
                     // You can add your quit logic here
-                    Navigator.pop(context);
-                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameLibrary(),
+                        ),
+                      );
+                    
+
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(230, 50),
@@ -124,7 +130,6 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
       },
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,8 +159,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                         ..strokeWidth = 12,
                       shadows: [
                         Shadow(
-                          color:
-                              Color.fromARGB(255, 22, 8, 148).withOpacity(1.0),
+                          color: Color.fromARGB(255, 22, 8, 148).withOpacity(1.0),
                           offset: Offset(11, 8),
                           blurRadius: 5,
                         ),
@@ -242,7 +246,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                     ],
                     borderRadius: BorderRadius.circular(20), // Rounded sides
                   ),
-                  child: ElevatedButton(
+                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -272,7 +276,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                     ),
                   ),
                 ),
-
+                
                 SizedBox(height: 16),
                 // Button 3
                 Container(
@@ -289,7 +293,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
+                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EasyScoreboardScreen(),
@@ -319,7 +323,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                 ),
                 SizedBox(height: 16),
                 // Button 4
-                Container(
+               Container(
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/jigsaw/jigsaw_hard.dart';
-import 'package:gunita20/screens/jigsaw/jigsaw_medium.dart';
+import 'package:gunita20/screens/jigsaw/jigsaw_moderate.dart';
 import 'package:gunita20/screens/jigsaw/jigzaw_easy.dart';
 // import 'package:gunita20/screens/crossword/enter_word.dart';
 
@@ -157,7 +157,7 @@ class _JigsawDifficultyScreenState extends State<JigsawDifficultyScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PuzzleWidgetMedium(),
+                          builder: (context) => PuzzleWidgetModerate(),
                         ),
                       );
                     },
@@ -173,7 +173,7 @@ class _JigsawDifficultyScreenState extends State<JigsawDifficultyScreen> {
                       ),
                     ),
                     child: Text(
-                      "Medium",
+                      "Moderate",
                       style: TextStyle(
                         fontFamily: 'purple_smile',
                         color: Colors.white,
