@@ -33,7 +33,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         children: [
           SizedBox(height: 80),
           Text(
-            'Choose category.',
+            'Choose category',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 28.0,
@@ -51,7 +51,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   if (index > 0) Divider(color: Colors.black, thickness: 2.0),
                   buildSelectionButton(
                     text: categories[index].name,
-                    onPressed: () => toggleCategorySelection(categories[index].name),
+                    onPressed: () =>
+                        toggleCategorySelection(categories[index].name),
                     isSelected: isCategorySelected(categories[index].name),
                     dynamicColor: categories[index].color,
                   ),
@@ -59,35 +60,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
               );
             },
           ),
-
           SizedBox(height: 100),
-
           Container(
             alignment: Alignment.bottomRight,
             margin: const EdgeInsets.only(top: 16.0),
             child: ElevatedButton(
               onPressed: () async {
-                // Category? result = await Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => NewCategoryScreen(
-                //       resetNewCategory: resetNewCategory,
-                //       onCategorySaved: (category) {
-                //         setState(() {
-                //           categories.add(Category(category['categoryName'], category['categoryColor']));
-                //           toggleCategorySelection(category['categoryName']);
-                //         });
-                //       },
-                //     ),
-                //   ),
-                // );
+                Category? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewCategoryScreen(
+                      resetNewCategory: resetNewCategory,
+                      onCategorySaved: (category) {
+                        setState(() {
+                          categories.add(Category(category['categoryName'],
+                              category['categoryColor']));
+                          toggleCategorySelection(category['categoryName']);
+                        });
+                      },
+                    ),
+                  ),
+                );
 
-                // if (result != null) {
-                //   setState(() {
-                //     categories.add(result);
-                //     toggleCategorySelection(result.name);
-                //   });
-                // }
+                if (result != null) {
+                  setState(() {
+                    categories.add(result);
+                    toggleCategorySelection(result.name);
+                  });
+                }
               },
               child: Text(
                 'Create New Category',
@@ -109,7 +109,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
             ),
           ),
-
           SizedBox(height: 50),
           Center(
             child: Row(
@@ -144,7 +143,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     if (selectedCategories.isNotEmpty) {
                       // Assuming you want to send the first selected category in the list
                       Category selectedCategory = selectedCategories.first;
-                      Navigator.pop(context, {'selectedCategory': selectedCategory});
+                      Navigator.pop(
+                          context, {'selectedCategory': selectedCategory});
                     } else {
                       // Handle the case where no category is selected
                       Navigator.pop(context, {'selectedCategory': null});
@@ -153,19 +153,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   child: Text(
                     'Save',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 18.0,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
                     fixedSize: Size(150, 50),
+                    backgroundColor: Colors.deepPurple,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
                     ),
                   ),
                 ),
@@ -221,10 +217,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void toggleCategorySelection(String categoryName) {
     setState(() {
       if (isCategorySelected(categoryName)) {
-        selectedCategories.removeWhere((category) => category.name == categoryName);
+        selectedCategories
+            .removeWhere((category) => category.name == categoryName);
       } else {
         // Check if the category is not already selected to avoid duplicates
-        if (!selectedCategories.any((category) => category.name == categoryName)) {
+        if (!selectedCategories
+            .any((category) => category.name == categoryName)) {
           Category category = categories.firstWhere(
             (category) => category.name == categoryName,
             orElse: () => Category('', Colors.transparent),
