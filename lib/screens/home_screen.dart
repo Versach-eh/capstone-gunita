@@ -28,16 +28,40 @@ class _HomeScreenState extends State<HomeScreen> {
   int onThisWeekQuantity = 0;
   int unresolvedQuantity = 0;
   int completedQuantity = 0;
+
+  late StreamController<int> onThisDayQuantityController;
+  late StreamController<int> onThisWeekQuantityController;
+  late StreamController<int> unresolvedQuantityController;
+  late StreamController<int> completedQuantityController;
+
+  late Stream<int> onThisDayQuantityStream;
+  late Stream<int> onThisWeekQuantityStream;
+  late Stream<int> unresolvedQuantityStream;
+  late Stream<int> completedQuantityStream;
+
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     fetchReminderQuantities().then((value) {
+      initializeStreams();
       setState(() {
         isLoading = false;
       });
     });
+  }
+
+  void initializeStreams() {
+    onThisDayQuantityController = StreamController<int>();
+    onThisWeekQuantityController = StreamController<int>();
+    unresolvedQuantityController = StreamController<int>();
+    completedQuantityController = StreamController<int>();
+
+    onThisDayQuantityStream = onThisDayQuantityController.stream;
+    onThisWeekQuantityStream = onThisWeekQuantityController.stream;
+    unresolvedQuantityStream = unresolvedQuantityController.stream;
+    completedQuantityStream = completedQuantityController.stream;
   }
 
   Future<void> fetchReminderQuantities() async {
@@ -47,16 +71,19 @@ class _HomeScreenState extends State<HomeScreen> {
       DateTime endOfWeek = today.add(Duration(days: 6));
 
       // Fetch on this day quantity
-      QuerySnapshot onThisDaySnapshot = await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
           .collection("reminders")
           .where("date",
               isEqualTo: DateTime(today.year, today.month, today.day))
-          .get();
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        onThisDayQuantityController.add(snapshot.size);
+      });
 
       // Fetch on this week quantity
-      QuerySnapshot onThisWeekSnapshot = await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
           .collection("reminders")
@@ -64,33 +91,44 @@ class _HomeScreenState extends State<HomeScreen> {
               isGreaterThanOrEqualTo:
                   DateTime(today.year, today.month, today.day),
               isLessThanOrEqualTo: endOfWeek)
-          .get();
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        onThisWeekQuantityController.add(snapshot.size);
+      });
 
       // Fetch unresolved quantity
-      QuerySnapshot unresolvedSnapshot = await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
           .collection("reminders")
           .where("isFinished", isEqualTo: false)
-          .get();
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        unresolvedQuantityController.add(snapshot.size);
+      });
 
       // Fetch completed quantity
-      QuerySnapshot completedSnapshot = await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
           .collection("reminders")
           .where("isFinished", isEqualTo: true)
-          .get();
-
-      setState(() {
-        onThisDayQuantity = onThisDaySnapshot.size;
-        onThisWeekQuantity = onThisWeekSnapshot.size;
-        unresolvedQuantity = unresolvedSnapshot.size;
-        completedQuantity = completedSnapshot.size;
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        completedQuantityController.add(snapshot.size);
       });
     } catch (e) {
       print("Error fetching reminders: $e");
     }
+  }
+
+  @override
+  void dispose() {
+    onThisDayQuantityController.close();
+    onThisWeekQuantityController.close();
+    unresolvedQuantityController.close();
+    completedQuantityController.close();
+    super.dispose();
   }
 
   Widget _buildAdjustableBox({
@@ -193,140 +231,215 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           SizedBox(height: 75),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                TodayScreen()),
-                                      );
-                                    },
-                                    child: _buildAdjustableBox(
-                                      width: 170,
-                                      height: 150,
-                                      color: Colors.grey.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: BorderSide(
-                                          color: Colors.white, width: 2),
-                                      child: Center(
-                                        child: Text(
-                                          'On this day',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Magdelin',
-                                          ),
-                                        ),
-                                      ),
-                                      quantity: onThisDayQuantity,
+                          isLoading
+                              ? SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 2,
+                                  child: Center(
+                                      child: CircularProgressIndicator(
+                                    strokeWidth: 8,
+                                  )),
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        StreamBuilder<int>(
+                                            stream: onThisDayQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TodayScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'On this day',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                        SizedBox(height: 10),
+                                        StreamBuilder<int>(
+                                            stream: onThisWeekQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            WeekScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'On this week',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                      ],
                                     ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => WeekScreen()),
-                                      );
-                                    },
-                                    child: _buildAdjustableBox(
-                                      width: 170,
-                                      height: 150,
-                                      color: Colors.grey.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: BorderSide(
-                                          color: Colors.white, width: 2),
-                                      child: Center(
-                                        child: Text(
-                                          'On this week',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Magdelin',
-                                          ),
-                                        ),
-                                      ),
-                                      quantity: onThisWeekQuantity,
+                                    Column(
+                                      children: [
+                                        StreamBuilder<int>(
+                                            stream: unresolvedQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            UnresolvedScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Unresolved',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                        SizedBox(height: 10),
+                                        StreamBuilder<int>(
+                                            stream: completedQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            CompletedScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Completed',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UnresolvedScreen()),
-                                      );
-                                    },
-                                    child: _buildAdjustableBox(
-                                      width: 170,
-                                      height: 150,
-                                      color: Colors.grey.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: BorderSide(
-                                          color: Colors.white, width: 2),
-                                      child: Center(
-                                        child: Text(
-                                          'Unresolved',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Magdelin',
-                                          ),
-                                        ),
-                                      ),
-                                      quantity: unresolvedQuantity,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CompletedScreen()),
-                                      );
-                                    },
-                                    child: _buildAdjustableBox(
-                                      width: 170,
-                                      height: 150,
-                                      color: Colors.grey.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: BorderSide(
-                                          color: Colors.white, width: 2),
-                                      child: Center(
-                                        child: Text(
-                                          'Completed',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Magdelin',
-                                          ),
-                                        ),
-                                      ),
-                                      quantity: completedQuantity,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ],
+                                ),
                         ],
                       ),
                     ),

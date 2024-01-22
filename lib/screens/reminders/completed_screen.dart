@@ -102,15 +102,22 @@ class _CompletedScreenState extends State<CompletedScreen> {
             Positioned(
               top: 16,
               left: 16,
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: CircleAvatar(
-                  backgroundColor: Colors.deepPurple,
-                  radius: 20,
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 30.0,
+              child: Container(
+                decoration: ShapeDecoration(
+                    shape: CircleBorder(), color: Colors.deepPurple),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    customBorder: CircleBorder(),
+                    onTap: () => Navigator.pop(context),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 30.0,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -135,7 +142,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Text(
-                      'Swipe each item to the left to delete or to the right to edit.',
+                      'Swipe each item to the left to delete',
                       style: TextStyle(
                         fontSize: 14.0,
                         fontFamily: 'Magdelin',
@@ -157,13 +164,15 @@ class _CompletedScreenState extends State<CompletedScreen> {
                                         fontSize: 20.0,
                                         fontFamily: 'Magdelin',
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                     Text(
-                                      'Create a reminder and it will appear right here',
+                                      'Accomplish a reminder and it will appear right here',
                                       style: TextStyle(
-                                        fontSize: 20.0,
+                                        fontSize: 14.0,
                                         fontFamily: 'Magdelin',
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
