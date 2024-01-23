@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/album/album_screen.dart';
 import 'package:gunita20/screens/gamelibrary_screen.dart';
 import 'package:gunita20/screens/reminders/category.dart';
+import 'package:gunita20/screens/reminders/category_reminder_list.dart';
 import 'package:gunita20/screens/reminders/completed_screen.dart';
 import 'package:gunita20/screens/reminders/unresolved_screen.dart';
 import 'package:gunita20/screens/reminders/week_screen.dart';
@@ -17,6 +22,153 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  int onThisDayQuantity = 0;
+  int onThisWeekQuantity = 0;
+  int unresolvedQuantity = 0;
+  int completedQuantity = 0;
+  List<String> categoryNames = [];
+  List<String> categoryColors = [];
+
+  late StreamController<int> onThisDayQuantityController;
+  late StreamController<int> onThisWeekQuantityController;
+  late StreamController<int> unresolvedQuantityController;
+  late StreamController<int> completedQuantityController;
+
+  late Stream<int> onThisDayQuantityStream;
+  late Stream<int> onThisWeekQuantityStream;
+  late Stream<int> unresolvedQuantityStream;
+  late Stream<int> completedQuantityStream;
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchReminderQuantities().then((value) {
+      fetchCategories();
+      initializeStreams();
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  void initializeStreams() {
+    onThisDayQuantityController = StreamController<int>();
+    onThisWeekQuantityController = StreamController<int>();
+    unresolvedQuantityController = StreamController<int>();
+    completedQuantityController = StreamController<int>();
+
+    onThisDayQuantityStream = onThisDayQuantityController.stream;
+    onThisWeekQuantityStream = onThisWeekQuantityController.stream;
+    unresolvedQuantityStream = unresolvedQuantityController.stream;
+    completedQuantityStream = completedQuantityController.stream;
+  }
+
+  Future<void> fetchReminderQuantities() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DateTime today = DateTime.now();
+      DateTime endOfWeek = today.add(Duration(days: 6));
+
+      // Fetch on this day quantity
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("reminders")
+          .where("date",
+              isEqualTo: DateTime(today.year, today.month, today.day))
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        onThisDayQuantityController.add(snapshot.size);
+      });
+
+      // Fetch on this week quantity
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("reminders")
+          .where("date",
+              isGreaterThanOrEqualTo:
+                  DateTime(today.year, today.month, today.day),
+              isLessThanOrEqualTo: endOfWeek)
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        onThisWeekQuantityController.add(snapshot.size);
+      });
+
+      // Fetch unresolved quantity
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("reminders")
+          .where("isFinished", isEqualTo: false)
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        unresolvedQuantityController.add(snapshot.size);
+      });
+
+      // Fetch completed quantity
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("reminders")
+          .where("isFinished", isEqualTo: true)
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        completedQuantityController.add(snapshot.size);
+      });
+    } catch (e) {
+      print("Error fetching reminders: $e");
+    }
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      QuerySnapshot categoriesSnapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .collection("categories")
+          .get();
+
+      List<String> names = [];
+      List<String> colors = [];
+
+      categoriesSnapshot.docs.forEach((DocumentSnapshot doc) {
+        Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String name = data["name"];
+          String color = data["color"];
+
+          names.add(name);
+          colors.add(color);
+        }
+      });
+
+      setState(() {
+        categoryNames = names;
+        categoryColors = colors;
+      });
+    } catch (e) {
+      print("Error fetching reminders: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    onThisDayQuantityController.close();
+    onThisWeekQuantityController.close();
+    unresolvedQuantityController.close();
+    completedQuantityController.close();
+    super.dispose();
+  }
+
   Widget _buildAdjustableBox({
     required double width,
     required double height,
@@ -46,14 +198,16 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 26,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.5),
+              color: quantity > 0
+                  ? Colors.deepPurple
+                  : Colors.grey.withOpacity(0.5),
               border: Border.all(color: Colors.black, width: 2),
             ),
             child: Center(
               child: Text(
                 quantity.toString(),
                 style: TextStyle(
-                  color: Colors.black,
+                  color: quantity > 0 ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -78,195 +232,381 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 70.0),
-              child: Column(
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: () async {
+          await fetchReminderQuantities();
+          await fetchCategories();
+        },
+        strokeWidth: 4,
+        child: isLoading
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Your Reminders',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 36.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Magdelin',
+                  Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 8,
+                      strokeCap: StrokeCap.round,
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    'No reminders',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontFamily: 'Magdelin',
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  Text(
-                    'Create a reminder and it will appear right here',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontFamily: 'Magdelin',
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
+                  )
+                ],
+              )
+            : ListView(
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 70.0),
+                      child: Column(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => TodayScreen()),
-                              );
-                            },
-                            child: _buildAdjustableBox(
-                              width: 170,
-                              height: 150,
-                              color: Colors.grey.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(15),
-                              border: BorderSide(color: Colors.white, width: 2),
-                              child: Center(
-                                child: Text(
-                                  'On this day',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Magdelin',
-                                  ),
-                                ),
-                              ),
-                              quantity: 0,
+                          Text(
+                            'Your Reminders',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 36.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Magdelin',
                             ),
                           ),
-                          SizedBox(height: 10),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => WeekScreen()),
-                              );
-                            },
-                            child: _buildAdjustableBox(
-                              width: 170,
-                              height: 150,
-                              color: Colors.grey.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(15),
-                              border: BorderSide(color: Colors.white, width: 2),
-                              child: Center(
-                                child: Text(
-                                  'On this week',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Magdelin',
-                                  ),
+                          SizedBox(height: 75),
+                          isLoading
+                              ? SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 2,
+                                  child: Center(
+                                      child: CircularProgressIndicator(
+                                    strokeWidth: 8,
+                                  )),
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        StreamBuilder<int>(
+                                            stream: onThisDayQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TodayScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'On this day',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                        SizedBox(height: 10),
+                                        StreamBuilder<int>(
+                                            stream: onThisWeekQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            WeekScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'On this week',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        StreamBuilder<int>(
+                                            stream: unresolvedQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            UnresolvedScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Unresolved',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                        SizedBox(height: 10),
+                                        StreamBuilder<int>(
+                                            stream: completedQuantityStream,
+                                            builder: (context, snapshot) {
+                                              int quantity = snapshot.data ?? 0;
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            CompletedScreen()),
+                                                  );
+                                                },
+                                                customBorder:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15))),
+                                                child: _buildAdjustableBox(
+                                                  width: 170,
+                                                  height: 150,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 2),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Completed',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Magdelin',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  quantity: quantity,
+                                                ),
+                                              );
+                                            }),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              quantity: 0,
-                            ),
-                          ),
                         ],
                       ),
-                      Column(
-                        children: [
-                          GestureDetector(  
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => UnresolvedScreen()),
-                              );
-                            },
-                            child: _buildAdjustableBox(
-                              width: 170,
-                              height: 150,
-                              color: Colors.grey.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(15),
-                              border: BorderSide(color: Colors.white, width: 2),
-                              child: Center(
-                                child: Text(
-                                  'Unresolved',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Magdelin',
-                                  ),
-                                ),
-                              ),
-                              quantity: 0,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => CompletedScreen()),
-                              );
-                            },
-                            child: _buildAdjustableBox(
-                              width: 170,
-                              height: 150,
-                              color: Colors.grey.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(15),
-                              border: BorderSide(color: Colors.white, width: 2),
-                              child: Center(
-                                child: Text(
-                                  'Completed',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Magdelin',
-                                  ),
-                                ),
-                              ),
-                              quantity: 0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
+                  categoryNames.isEmpty
+                      ? SizedBox()
+                      : Padding(
+                          padding: const EdgeInsets.fromLTRB(28, 40, 28, 10),
+                          child: Text(
+                            "Your Categories",
+                            style: TextStyle(
+                                fontFamily: 'Magdelin',
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                  categoryNames.isEmpty
+                      ? SizedBox()
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: ListView.builder(
+                                itemCount: categoryNames.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                CategoryReminderScreen(
+                                              category: categoryNames[index],
+                                            ),
+                                          ),
+                                        ),
+                                        child: Container(
+                                          decoration: ShapeDecoration(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12))),
+                                            color: Color(int.parse(
+                                                categoryColors[index])),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 12),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons
+                                                    .label_outline_rounded),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text(categoryNames[index]),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                    ],
+                                  );
+                                  // return ElevatedButton.icon(
+                                  //     onPressed: () {},
+                                  //     style: ButtonStyle(
+                                  //       foregroundColor:
+                                  //           MaterialStatePropertyAll(Colors.black),
+                                  //       backgroundColor: MaterialStatePropertyAll(
+                                  //           Color(int.parse(categoryColors[index]))),
+                                  //     ),
+                                  //     icon: Icon(Icons.label_rounded),
+                                  //     label: Text(categoryNames[index]));
+                                }),
+                          ),
+                        ),
+                  // Positioned(
+                  //   bottom: 30,
+                  //   right: 20,
+                  //   child: Container(
+                  //     width: 180,
+                  //     height: 60,
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.grey.withOpacity(0.5),
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     child: TextButton(
+                  //       onPressed: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => ReminderScreen()),
+                  //         );
+                  //       },
+                  //       child: Text(
+                  //         'Add reminder',
+                  //         style: TextStyle(
+                  //           fontSize: 18,
+                  //           color: Colors.black,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
-            ),
-          ),
-          Positioned(
-            bottom: 30,
-            right: 20,
-            child: Container(
-              width: 180,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ReminderScreen()),
-                  );
-                },
-                child: Text(
-                  'Add reminder',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ReminderScreen()),
+          );
+        },
+        label: Text(
+          "Add reminder",
+          style: TextStyle(
+              fontFamily: 'Magdelin',
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+        icon: Icon(Icons.add_rounded),
+        elevation: 0,
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(20),

@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:gunita20/screens/reminders/add_reminder.dart';
 import 'package:intl/intl.dart';
 
-class CompletedScreen extends StatefulWidget {
-  const CompletedScreen({Key? key}) : super(key: key);
+class CategoryReminderScreen extends StatefulWidget {
+  final String category;
+  const CategoryReminderScreen({Key? key, required this.category})
+      : super(key: key);
 
   @override
-  _CompletedScreenState createState() => _CompletedScreenState();
+  _CategoryReminderScreenState createState() => _CategoryReminderScreenState();
 }
 
-class _CompletedScreenState extends State<CompletedScreen> {
+class _CategoryReminderScreenState extends State<CategoryReminderScreen> {
   List<String> completedSchedules = [];
-  List<DateTime> completedDates = [];
+  List<String> unresolvedSchedules = [];
   List<String> completedTimes = [];
+  List<String> unresolvedTimes = [];
   bool isLoading = true;
 
   @override
@@ -35,32 +38,48 @@ class _CompletedScreenState extends State<CompletedScreen> {
           .collection("Users")
           .doc(userId)
           .collection("reminders")
-          .where("isFinished", isEqualTo: true)
           .get();
 
       List<String> completed = [];
+      List<String> unresolved = [];
       List<DateTime> completedDateList = [];
+      List<DateTime> unresolvedDateList = [];
       List<String> completedTimesList = [];
+      List<String> unresolvedTimesList = [];
 
       remindersSnapshot.docs.forEach((DocumentSnapshot doc) {
         Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
 
         if (data != null && data.containsKey("isFinished")) {
+          bool isFinished = data["isFinished"];
           String title = data["title"];
 
           Timestamp timestamp = data["date"];
           DateTime date = timestamp.toDate();
 
-          completed.add(title);
-          completedDateList.add(date);
-          completedTimesList.add(data["time"]);
+          // Check if the "categories" field contains the specified category name
+          List<dynamic>? categories = data["categories"];
+          if (categories != null &&
+              categories
+                  .any((category) => category["name"] == widget.category)) {
+            if (isFinished) {
+              completed.add(title);
+              completedDateList.add(date);
+              completedTimesList.add(data["time"]);
+            } else {
+              unresolved.add(title);
+              unresolvedDateList.add(date);
+              unresolvedTimesList.add(data["time"]);
+            }
+          }
         }
       });
 
       setState(() {
         completedSchedules = completed;
-        completedDates = completedDateList;
+        unresolvedSchedules = unresolved;
         completedTimes = completedTimesList;
+        unresolvedTimes = unresolvedTimesList;
       });
     } catch (e) {
       print("Error fetching reminders: $e");
@@ -131,7 +150,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
                     height: 100,
                   ),
                   Text(
-                    'Your Completed Reminders',
+                    '${widget.category}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 30.0,
@@ -153,7 +172,8 @@ class _CompletedScreenState extends State<CompletedScreen> {
                   SizedBox(height: 20),
                   Expanded(
                     child: !isLoading
-                        ? completedSchedules.isEmpty
+                        ? (completedSchedules.isEmpty &&
+                                unresolvedSchedules.isEmpty)
                             ? Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -164,15 +184,6 @@ class _CompletedScreenState extends State<CompletedScreen> {
                                         fontSize: 20.0,
                                         fontFamily: 'Magdelin',
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      'Accomplish a reminder and it will appear right here',
-                                      style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontFamily: 'Magdelin',
-                                      ),
-                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
@@ -183,13 +194,37 @@ class _CompletedScreenState extends State<CompletedScreen> {
                                 child: ListView(
                                   children: [
                                     for (int i = 0;
-                                        i < completedSchedules.length;
+                                        i < unresolvedSchedules.length;
                                         i++)
                                       _buildDismissibleItem(
-                                          completedSchedules[i],
-                                          true,
-                                          completedDates[i],
-                                          completedTimes[i]),
+                                          unresolvedSchedules[i],
+                                          false,
+                                          unresolvedTimes[i]),
+                                    if (completedSchedules.isNotEmpty) ...[
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20.0),
+                                          child: Text(
+                                            'COMPLETED',
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Magdelin',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      for (int i = 0;
+                                          i < completedSchedules.length;
+                                          i++)
+                                        _buildDismissibleItem(
+                                            completedSchedules[i],
+                                            true,
+                                            completedTimes[i]),
+                                    ],
                                   ],
                                 ),
                               )
@@ -209,15 +244,14 @@ class _CompletedScreenState extends State<CompletedScreen> {
     );
   }
 
-  Widget _buildDismissibleItem(
-      String title, bool isCompleted, DateTime date, String time) {
+  Widget _buildDismissibleItem(String title, bool isCompleted, String time) {
     return Dismissible(
       key: Key(title),
       background: _buildDismissBackground(isCompleted, true),
       secondaryBackground: _buildDismissBackground(isCompleted, false),
       onDismissed: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          await _deleteReminder(title, date, time);
+          await _deleteReminder(title, time);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('$title deleted'),
           ));
@@ -225,7 +259,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
           // TODO: Handle edit
         }
       },
-      child: _buildCheckboxListTile(title, isCompleted, date, time),
+      child: _buildCheckboxListTile(title, isCompleted, time),
     );
   }
 
@@ -244,10 +278,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
     );
   }
 
-  Widget _buildCheckboxListTile(
-      String title, bool isCompleted, DateTime date, String time) {
-    String formattedDate = DateFormat.yMd().format(date);
-
+  Widget _buildCheckboxListTile(String title, bool isCompleted, String time) {
     return CheckboxListTile(
       contentPadding: EdgeInsets.zero,
       title: Row(
@@ -263,7 +294,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
                     : null,
               ),
               Text(
-                "$formattedDate $time",
+                "$time",
                 style: TextStyle(
                   fontSize: 12.0,
                   color: Colors.grey,
@@ -290,9 +321,9 @@ class _CompletedScreenState extends State<CompletedScreen> {
       onChanged: (bool? value) async {
         if (value != null) {
           if (isCompleted) {
-            _moveToUnresolved(title, date, time);
+            _moveToUnresolved(title, time);
           } else {
-            _moveToCompleted(title, date, time);
+            _moveToCompleted(title, time);
           }
           await updateReminderStatus(title, !isCompleted);
         }
@@ -300,7 +331,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
     );
   }
 
-  Future<void> _deleteReminder(String title, DateTime date, String time) async {
+  Future<void> _deleteReminder(String title, String time) async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
     await FirebaseFirestore.instance
         .collection("Users")
@@ -321,24 +352,27 @@ class _CompletedScreenState extends State<CompletedScreen> {
       }
     });
     setState(() {
+      unresolvedSchedules.remove(title);
+      unresolvedTimes.remove(time);
       completedSchedules.remove(title);
-      completedDates.remove(date);
       completedTimes.remove(time);
     });
   }
 
-  void _moveToUnresolved(String title, DateTime date, String time) {
+  void _moveToUnresolved(String title, String time) {
     setState(() {
       completedSchedules.remove(title);
-      completedDates.remove(date);
       completedTimes.remove(time);
+      unresolvedSchedules.add(title);
+      unresolvedTimes.add(time);
     });
   }
 
-  void _moveToCompleted(String title, DateTime date, String time) {
+  void _moveToCompleted(String title, String time) {
     setState(() {
+      unresolvedSchedules.remove(title);
+      unresolvedTimes.remove(time);
       completedSchedules.add(title);
-      completedDates.add(date);
       completedTimes.add(time);
     });
   }
