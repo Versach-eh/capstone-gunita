@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:gunita20/screens/gamelibrary_screen.dart';
-import 'package:gunita20/screens/jigsaw/easy_scoreboard.dart';
-import 'package:gunita20/screens/jigsaw/instruction.dart';
-import 'package:gunita20/screens/jigsaw/jigsaw_difficulty.dart';
-import 'package:gunita20/screens/jigsaw/jigzaw_easy.dart';
+import 'package:gunita20/screens/matching/category.dart';
+import 'package:gunita20/screens/matching/difficulty.dart';
+import 'package:gunita20/screens/matching/instruction.dart';
+import 'package:gunita20/screens/matching/easy_scoreboard.dart';
 
-
-class JigsawMenuScreen extends StatefulWidget {
-  const JigsawMenuScreen({Key? key}) : super(key: key);
+class MatchingMenuScreen extends StatefulWidget {
+  const MatchingMenuScreen({Key? key}) : super(key: key);
 
   @override
-  _JigsawMenuScreenState createState() => _JigsawMenuScreenState();
+  _MatchingMenuScreenState createState() => _MatchingMenuScreenState();
 }
 
-class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
+class _MatchingMenuScreenState extends State<MatchingMenuScreen> {
   Future<void> _showQuitConfirmationDialog() async {
     return showDialog<void>(
       context: context,
@@ -24,7 +22,8 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
             borderRadius: BorderRadius.circular(20.0),
             side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
           ),
-          backgroundColor: Color(0xfffcFFF9E3), // Set your custom background color here
+          backgroundColor:
+              Color(0xfffcFFF9E3), // Set your custom background color here
           title: Text(
             'Are you sure you want to quit?',
             style: TextStyle(
@@ -90,16 +89,8 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigator.of(context).pop(); // Dismiss the dialog
-                    // You can add your quit logic here
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameLibrary(),
-                        ),
-                      );
-                    
-
+                    Navigator.of(context).pop(); // Dismiss the dialog
+                    Navigator.of(context).pop(); // Return to the previous page
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(230, 50),
@@ -130,6 +121,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,23 +135,24 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
         child: ListView(
           padding: EdgeInsets.all(16.0),
           children: [
-            SizedBox(height: 90),
+            SizedBox(height: 120),
             Center(
               child: Stack(
                 children: [
                   Text(
-                    'MINDFUL MERGE',
+                    'PAIR PLAY',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 62.0,
                       fontFamily: 'kg_inimitable_original',
                       foreground: Paint()
                         ..style = PaintingStyle.stroke
-                        ..color = Color(0xfffcE28229)
+                        ..color = Color(0xfffc3457B1)
                         ..strokeWidth = 12,
                       shadows: [
                         Shadow(
-                          color: Color.fromARGB(255, 190, 98, 11).withOpacity(1.0),
+                          color:
+                              Color.fromARGB(255, 22, 8, 148).withOpacity(1.0),
                           offset: Offset(11, 8),
                           blurRadius: 5,
                         ),
@@ -167,7 +160,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                     ),
                   ),
                   Text(
-                    'MINDFUL MERGE',
+                    'PAIR PLAY',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 62.0,
@@ -185,7 +178,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 70),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -207,7 +200,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => JigsawDifficultyScreen(),
+                          builder: (context) => CategoryMatchingMenuScreen(),
                         ),
                       );
                     },
@@ -246,7 +239,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                     ],
                     borderRadius: BorderRadius.circular(20), // Rounded sides
                   ),
-                   child: ElevatedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -276,7 +269,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(height: 16),
                 // Button 3
                 Container(
@@ -293,7 +286,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                       Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => EasyScoreboardScreen(),
@@ -323,7 +316,7 @@ class _JigsawMenuScreenState extends State<JigsawMenuScreen> {
                 ),
                 SizedBox(height: 16),
                 // Button 4
-               Container(
+                Container(
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(

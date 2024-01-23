@@ -31,20 +31,42 @@ class _GameLibraryState extends State<GameLibrary> {
           children: [
             // Header Section
             Container(
-              padding: const EdgeInsets.all(15),
-              color: Color(0xfffcF0F4FC),
-              child: Column(
-                children: [
-                  SizedBox(height: 40),
-                  Text(
-                    'Your Game Library',
-                    style: TextStyle(
-                      fontSize: 35, 
-                      fontFamily: 'Magdelin',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  )
+  padding: const EdgeInsets.all(15),
+  color: Color(0xfffcF0F4FC),
+  child: Stack(
+    alignment: Alignment.center,
+    children: [
+      Column(
+        children: [
+          SizedBox(height: 40),
+          Text(
+            'Your Game Library',
+            style: TextStyle(
+              fontSize: 30, 
+              fontFamily: 'Magdelin',
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+      Positioned(
+        top: 33,
+        right: 10,
+        child: IconButton(
+          icon: Icon(
+            Icons.account_circle_outlined,
+            size: 40,
+            color: Color(0xfffc4530B2),
+          ),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GameHistory()),
+              );
+          },
+        ),
+      ),
                 ],
               ),
             ),
@@ -125,7 +147,7 @@ class _GameLibraryState extends State<GameLibrary> {
                                       // Customize the 'PLAY' button logic for Jigsaw
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => GameHistory()),
+                                        MaterialPageRoute(builder: (context) => JigsawMenuScreen()),
                                       );
                                     } else if (imageData['path'] == 'assets/images/wordsearch.gif') {
                                       // Customize the 'PLAY' button logic for Word Search
@@ -210,7 +232,7 @@ class _GameLibraryState extends State<GameLibrary> {
       icon: Icon(
         icon,
         size: 30,
-        color: const Color(0xff959595),
+        color:  Color.fromARGB(255, 133, 133, 133),
       ),
       onPressed: onPressed,
     );
