@@ -203,12 +203,12 @@ Widget build(BuildContext context) {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FruitTheMemoryMatchGame(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => FruitTheMemoryMatchGame(),
+                      //   ),
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),

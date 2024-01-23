@@ -1,6 +1,6 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:gunita20/screens/matching/category.dart';
+// import 'package:gunita20/screens/matching/category.dart';
 import 'package:gunita20/screens/gamelibrary_screen.dart';
 
 class GameConfetti extends StatefulWidget {
@@ -183,11 +183,11 @@ class _GameConfettiState extends State<GameConfetti> {
   }
 
   void playAgain() {
-    Navigator.pushReplacement(
-      popupContext,
-      MaterialPageRoute(
-          builder: (BuildContext context) => CategoryMatchingMenuScreen()),
-    );
+    // Navigator.pushReplacement(
+    //   popupContext,
+    //   MaterialPageRoute(
+    //       builder: (BuildContext context) => CategoryMatchingMenuScreen()),
+    // );
   }
 
   // void quitGame() {

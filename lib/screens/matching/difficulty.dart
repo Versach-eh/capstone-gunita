@@ -20,13 +20,13 @@ class _MatchingDifficultyScreenState extends State<MatchingDifficultyScreen> {
     },
     {
       'title': 'Medium',
-      'level': 4,
+      'level': 3,
       'color': Color(0xfffc36C655),
       'difficulty': 1
     },
     {
       'title': 'Hard',
-      'level': 6,
+      'level': 4,
       'color': Color(0xfffc36C655),
       'difficulty': 2
     },
