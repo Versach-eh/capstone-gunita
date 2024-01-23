@@ -5,6 +5,7 @@ import 'package:gunita20/screens/jigsaw/menu.dart';
 // import 'package:gunita20/screens/matching/menu.dart';
 import 'package:gunita20/screens/home_screen.dart';
 import 'package:gunita20/screens/album/album_screen.dart';
+import 'package:gunita20/screens/matching/menu.dart';
 import 'package:gunita20/screens/settings/settings_screen.dart';
 
 class GameLibrary extends StatefulWidget {
@@ -16,9 +17,21 @@ class GameLibrary extends StatefulWidget {
 
 class _GameLibraryState extends State<GameLibrary> {
   List<Map<String, dynamic>> gif = [
-    {'path': 'assets/images/jigsaw.gif', 'line1': 'Mindful Merge', 'line2': 'Piece by piece, a memory is built!'},
-    {'path': 'assets/images/wordsearch.gif', 'line1': 'Word Wander', 'line2': 'Discover delight in every word.'},
-    {'path': 'assets/images/mam.gif', 'line1': 'Pair Play', 'line2': 'Lets match some moments!'},
+    {
+      'path': 'assets/images/jigsaw.gif',
+      'line1': 'Mindful Merge',
+      'line2': 'Piece by piece, a memory is built!'
+    },
+    {
+      'path': 'assets/images/wordsearch.gif',
+      'line1': 'Word Wander',
+      'line2': 'Discover delight in every word.'
+    },
+    {
+      'path': 'assets/images/mam.gif',
+      'line1': 'Pair Play',
+      'line2': 'Lets match some moments!'
+    },
   ];
 
   @override
@@ -31,42 +44,43 @@ class _GameLibraryState extends State<GameLibrary> {
           children: [
             // Header Section
             Container(
-  padding: const EdgeInsets.all(15),
-  color: Color(0xfffcF0F4FC),
-  child: Stack(
-    alignment: Alignment.center,
-    children: [
-      Column(
-        children: [
-          SizedBox(height: 40),
-          Text(
-            'Your Game Library',
-            style: TextStyle(
-              fontSize: 30, 
-              fontFamily: 'Magdelin',
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-      Positioned(
-        top: 33,
-        right: 10,
-        child: IconButton(
-          icon: Icon(
-            Icons.account_circle_outlined,
-            size: 40,
-            color: Color(0xfffc4530B2),
-          ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => GameHistory()),
-              );
-          },
-        ),
-      ),
+              padding: const EdgeInsets.all(15),
+              color: Color(0xfffcF0F4FC),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(height: 40),
+                      Text(
+                        'Your Game Library',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'Magdelin',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: 33,
+                    right: 10,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.account_circle_outlined,
+                        size: 40,
+                        color: Color(0xfffc4530B2),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GameHistory()),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -83,13 +97,16 @@ class _GameLibraryState extends State<GameLibrary> {
                         // Customize the navigation logic for Jigsaw
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => JigsawMenuScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => JigsawMenuScreen()),
                         );
-                      } else if (imageData['path'] == 'assets/images/wordsearch.gif') {
+                      } else if (imageData['path'] ==
+                          'assets/images/wordsearch.gif') {
                         // Customize the navigation logic for Word Search
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CrosswordMenuScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => CrosswordMenuScreen()),
                         );
                       } else if (imageData['path'] == 'assets/images/mam.gif') {
                         // Customize the navigation logic for Mam
@@ -143,32 +160,43 @@ class _GameLibraryState extends State<GameLibrary> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     // Customize the 'PLAY' button logic based on the image
-                                    if (imageData['path'] == 'assets/images/jigsaw.gif') {
+                                    if (imageData['path'] ==
+                                        'assets/images/jigsaw.gif') {
                                       // Customize the 'PLAY' button logic for Jigsaw
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => JigsawMenuScreen()),
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                JigsawMenuScreen()),
                                       );
-                                    } else if (imageData['path'] == 'assets/images/wordsearch.gif') {
+                                    } else if (imageData['path'] ==
+                                        'assets/images/wordsearch.gif') {
                                       // Customize the 'PLAY' button logic for Word Search
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => CrosswordMenuScreen()),
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CrosswordMenuScreen()),
                                       );
-                                    } else if (imageData['path'] == 'assets/images/mam.gif') {
+                                    } else if (imageData['path'] ==
+                                        'assets/images/mam.gif') {
                                       // Customize the 'PLAY' button logic for Mam
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(builder: (context) => MatchingMenuScreen()),
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MatchingMenuScreen()),
+                                      );
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    primary: Color(0xfffc4530B2).withOpacity(0.9),
+                                    primary:
+                                        Color(0xfffc4530B2).withOpacity(0.9),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    padding: EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 28, vertical: 5),
                                   ),
                                   child: Text(
                                     'PLAY',
@@ -190,7 +218,6 @@ class _GameLibraryState extends State<GameLibrary> {
                 }).toList(),
               ),
             ),
-
           ],
         ),
       ),
@@ -232,11 +259,9 @@ class _GameLibraryState extends State<GameLibrary> {
       icon: Icon(
         icon,
         size: 30,
-        color:  Color.fromARGB(255, 133, 133, 133),
+        color: Color.fromARGB(255, 133, 133, 133),
       ),
       onPressed: onPressed,
     );
   }
 }
-
-
