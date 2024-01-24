@@ -400,7 +400,7 @@ class _EnterWordScreenState extends State<EnterWordScreen> {
                           FilteringTextInputFormatter.deny(RegExp(
                               r'[^a-zA-Z]')), // Allow only alphabetic characters
                           LengthLimitingTextInputFormatter(
-                              10), // Limit the length to 10 characters
+                              8), // Limit the length to 10 characters
                           UpperCaseTextFormatter(), // Convert input to uppercase
                         ],
                         decoration: InputDecoration(

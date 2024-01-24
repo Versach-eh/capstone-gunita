@@ -145,7 +145,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                     top: 100.0, // Adjust the top position as needed
                     left: 10.0, // Adjust the left position as needed
                     child: Text(
-                      'Choose your desired mode.',
+                      'Choose the level of difficulty',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24.0,
@@ -170,7 +170,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                     top: 160.0, // Adjust the top position as needed
                     left: 10.0, // Adjust the left position as needed
                     child: Text(
-                      'Choose your desired theme.',
+                      'Enter your desired word in the provided text field.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24.0,
@@ -195,7 +195,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                     top: 220.0, // Adjust the top position as needed
                     left: 10.0, // Adjust the left position as needed
                     child: Text(
-                      'Click “Let’s Start!”',
+                      'Tap the arrow icon button to include the word in the puzzle and repeat this process for up to 4/6/8 words depending on the level',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24.0,
@@ -220,7 +220,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                     top: 280.0, // Adjust the top position as needed
                     left: 10.0, // Adjust the left position as needed
                     child: Text(
-                      'Flip over two cards at a time, aimingto find matching pairs.',
+                      'Once all desired words are added, tap the "Next" button.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24.0,
@@ -246,7 +246,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                     top: 370.0, // Adjust the top position as needed
                     left: 10.0, // Adjust the left position as needed
                     child: Text(
-                      'If the cards do not match, the cards will automatically flip back face down.',
+                      'Click “Let’s Start!”',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24.0,
@@ -254,59 +254,6 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                       ),
                     ),
                   ),
-                  
-                  SizedBox(height: 20),
-                   Positioned(
-                    top: 465, // Adjust the top position as needed
-                    left: 10.0, // Adjust the left position as needed
-                    child: Text(
-                      'Step 7:',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24.0,
-                        fontFamily: 'Magdelin',
-                      ),
-                    ),
-                  ),
-                   Positioned(
-                    top: 495, // Adjust the top position as needed
-                    left: 10.0, // Adjust the left position as needed
-                    child: Text(
-                      'Continue turning pairs until all matches are found.',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24.0,
-                        fontFamily: 'Magdelin',
-                      ),
-                    ),
-                  ),
-                 
-                  SizedBox(height: 20),
-                  Positioned(
-                    top: 555, // Adjust the top position as needed
-                    left: 10.0, // Adjust the left position as needed
-                    child: Text(
-                      'Step 8:',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24.0,
-                        fontFamily: 'Magdelin',
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 585, // Adjust the top position as needed
-                    left: 10.0, // Adjust the left position as needed
-                    child: Text(
-                      'Finish the game by uncovering all pairs, aiming for the shortest time possible.',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24.0,
-                        fontFamily: 'Magdelin',
-                      ),
-                    ),
-                  ),
-                   
                 ],
               ),
             ),

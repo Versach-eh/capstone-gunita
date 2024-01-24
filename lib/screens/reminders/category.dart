@@ -80,7 +80,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   fontFamily: 'Magdelin',
                 ),
               ),
-              SizedBox(height: 80),
+              SizedBox(height: 10),
               categories.isEmpty
                   ? SizedBox(
                       height: MediaQuery.of(context).size.height / 5,
@@ -177,38 +177,54 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
               SizedBox(height: 100),
               Container(
-                alignment: Alignment.bottomRight,
-                margin: const EdgeInsets.only(top: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            const NewCategoryScreen(),
+                  alignment: Alignment.bottomRight,
+                  margin: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const NewCategoryScreen(),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.add,
+                              size: 28,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 20.0),
+                            Text(
+                              'Create Category',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Magdelin',
+                                fontSize: 22.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xfffc4530B2),
+                          fixedSize: Size(250, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color: Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  child: Text(
-                    'Create New Category',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey.withOpacity(0.1),
-                    fixedSize: Size(250, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: Colors.transparent,
-                        width: 2.0,
-                      ),
-                    ),
+                    ],
                   ),
                 ),
-              ),
+
               SizedBox(height: 50),
               Center(
                 child: Row(
@@ -227,9 +243,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
-                        fixedSize: Size(150, 50),
+                        fixedSize: Size(150, 45),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(22),
                           side: BorderSide(
                             color: Colors.black,
                             width: 2.0,
@@ -250,10 +266,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        fixedSize: Size(150, 50),
-                        backgroundColor: Colors.deepPurple,
+                        fixedSize: Size(150, 45),
+                        backgroundColor: Color(0xfffc4530B2),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(22),
                         ),
                       ),
                     ),

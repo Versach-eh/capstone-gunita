@@ -199,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: quantity > 0
-                  ? Colors.deepPurple
+                  ? Color(0xfffc4530B2)
                   : Colors.grey.withOpacity(0.5),
               border: Border.all(color: Colors.black, width: 2),
             ),
@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontFamily: 'Magdelin',
                             ),
                           ),
-                          SizedBox(height: 75),
+                          SizedBox(height: 50),
                           isLoading
                               ? SizedBox(
                                   height:
@@ -309,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   width: 170,
                                                   height: 150,
                                                   color: Colors.grey
-                                                      .withOpacity(0.5),
+                                                      .withOpacity(0.3),
                                                   borderRadius:
                                                       BorderRadius.circular(15),
                                                   border: BorderSide(
@@ -320,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       'On this day',
                                                       style: TextStyle(
                                                         color: Colors.black,
-                                                        fontSize: 20,
+                                                        fontSize: 23,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontFamily: 'Magdelin',
@@ -356,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   width: 170,
                                                   height: 150,
                                                   color: Colors.grey
-                                                      .withOpacity(0.5),
+                                                      .withOpacity(0.3),
                                                   borderRadius:
                                                       BorderRadius.circular(15),
                                                   border: BorderSide(
@@ -367,7 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       'On this week',
                                                       style: TextStyle(
                                                         color: Colors.black,
-                                                        fontSize: 20,
+                                                        fontSize: 23,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontFamily: 'Magdelin',
@@ -406,7 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   width: 170,
                                                   height: 150,
                                                   color: Colors.grey
-                                                      .withOpacity(0.5),
+                                                      .withOpacity(0.3),
                                                   borderRadius:
                                                       BorderRadius.circular(15),
                                                   border: BorderSide(
@@ -417,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       'Unresolved',
                                                       style: TextStyle(
                                                         color: Colors.black,
-                                                        fontSize: 20,
+                                                        fontSize: 23,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontFamily: 'Magdelin',
@@ -453,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   width: 170,
                                                   height: 150,
                                                   color: Colors.grey
-                                                      .withOpacity(0.5),
+                                                      .withOpacity(0.3),
                                                   borderRadius:
                                                       BorderRadius.circular(15),
                                                   border: BorderSide(
@@ -464,7 +464,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       'Completed',
                                                       style: TextStyle(
                                                         color: Colors.black,
-                                                        fontSize: 20,
+                                                        fontSize: 23,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontFamily: 'Magdelin',
@@ -520,21 +520,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                           decoration: ShapeDecoration(
                                             shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(12))),
+                                                    Radius.circular(15))),
                                             color: Color(int.parse(
                                                 categoryColors[index])),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0, vertical: 12),
+                                                horizontal: 8.0, vertical: 15),
                                             child: Row(
                                               children: [
                                                 Icon(Icons
-                                                    .label_outline_rounded),
+                                                    .label_outline_rounded, size: 35,),
                                                 SizedBox(
-                                                  width: 8,
+                                                  width: 10,
                                                 ),
-                                                Text(categoryNames[index]),
+                                                Text(categoryNames[index],
+                                                 style: TextStyle(
+                                                  fontSize: 23,
+                                                  color: Colors.black,
+                                                  fontFamily: 'Magdelin',
+                                                   // Adjust the font size as needed
+                                                 ),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -589,25 +596,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ReminderScreen()),
-          );
-        },
-        label: Text(
-          "Add reminder",
-          style: TextStyle(
-              fontFamily: 'Magdelin',
-              fontSize: 20,
-              fontWeight: FontWeight.bold),
+      floatingActionButton: Container(
+          width: 200, // Adjust the width as needed
+          height: 65, // Adjust the height as needed
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ReminderScreen()),
+              );
+            },
+            label: Text(
+              "Add reminder",
+              style: TextStyle(
+                fontFamily: 'Magdelin',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            icon: Icon(Icons.add_rounded, size: 30,
+            ),
+            elevation: 0,
+            backgroundColor: Color(0xfffc4530B2),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22), 
+              // Adjust the value as needed
+            ),
+          ),
         ),
-        icon: Icon(Icons.add_rounded),
-        elevation: 0,
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-      ),
+
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(

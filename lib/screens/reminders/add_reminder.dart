@@ -161,9 +161,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
             width: 300,
             height: 250,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 184, 183, 183).withOpacity(0.5),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white, width: 2.0),
+              border: Border.all(color: Color(0xfffc4530B2), width: 2.0),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -176,20 +176,20 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       prefix: Text(
                         'Title: ',
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 20.0,
                           fontFamily: 'Magdelin',
                           color: Colors.black,
                         ),
                       ),
-                      hintText: 'Enter title here...',
+                      hintText: 'Add title here',
                       hintStyle: TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 20.0,
                         fontFamily: 'Magdelin',
                         color: Colors.black,
                       ),
                     ),
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 22.0,
                       fontFamily: 'Magdelin',
                     ),
                     onChanged: (value) {
@@ -197,16 +197,16 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     },
                   ),
                   Divider(
-                    color: Colors.black,
+                    color: Color(0xfffc4530B2),
                     thickness: 2.0,
                   ),
                   TextField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Insert description here...',
+                      hintText: 'Insert description here',
                       hintStyle: TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 20.0,
                         fontFamily: 'Magdelin',
                         color: Colors.black,
                       ),
@@ -225,9 +225,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
             width: 300,
             height: 60,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 184, 183, 183).withOpacity(0.5),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white, width: 2.0),
+              border: Border.all(color: Color(0xfffc4530B2), width: 2.0),
             ),
             child: ElevatedButton(
               onPressed: () async {
@@ -274,9 +274,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
             width: 300,
             height: 60,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 184, 183, 183).withOpacity(0.5),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white, width: 2.0),
+              border: Border.all(color: Color(0xfffc4530B2), width: 2.0),
             ),
             child: ElevatedButton(
               onPressed: () async {
@@ -358,7 +358,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 50),
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -376,7 +376,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.white,
-                    fixedSize: Size(150, 50),
+                    fixedSize: Size(150, 45),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(
@@ -399,8 +399,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    fixedSize: Size(150, 50),
+                    backgroundColor: Color(0xfffc4530B2),
+                    fixedSize: Size(150, 45),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),

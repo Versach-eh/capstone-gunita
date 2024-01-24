@@ -120,12 +120,12 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
           ),
           SizedBox(height: 70),
           Container(
-            width: 300,
+            width: 320,
             height: 250,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 184, 183, 183).withOpacity(0.5),
+              color: const Color(0xfffcE3EDF9),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white, width: 4.0),
+              // border: Border.all(color: Colors.white, width: 1.0),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -213,7 +213,7 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.white,
-                    fixedSize: Size(150, 50),
+                    fixedSize: Size(140, 45),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(
@@ -234,8 +234,8 @@ class _NewCategoryScreenState extends State<NewCategoryScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.deepPurple,
-                    fixedSize: Size(150, 50),
+                    primary: Color(0xfffc4530B2),
+                    fixedSize: Size(140, 45),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),

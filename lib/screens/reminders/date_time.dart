@@ -20,12 +20,12 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
       body: ListView(
         padding: EdgeInsets.all(16.0),
         children: [
-          SizedBox(height: 50),
+          SizedBox(height: 70),
           Text(
             'When to remind?',
-            textAlign: TextAlign.start,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 28.0,
+              fontSize: 30.0,
               fontWeight: FontWeight.bold,
               fontFamily: 'Magdelin',
             ),
@@ -104,12 +104,13 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                     'Back',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18.0,
+                      fontFamily: 'Magdelin',
+                      fontSize: 20.0,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.white,
-                    fixedSize: Size(150, 50),
+                    fixedSize: Size(150, 45),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(
@@ -128,17 +129,18 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                   child: Text(
                     'Save',
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18.0,
+                      color: Colors.white,
+                      fontFamily: 'Magdelin',
+                      fontSize: 20.0,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    fixedSize: Size(150, 50),
+                    primary: Color(0xfffc4530B2),
+                    fixedSize: Size(150, 45),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(
-                        color: Colors.black,
+                        color: Color(0xfffc4530B2),
                         width: 2.0,
                       ),
                     ),
@@ -160,7 +162,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
       width: 300,
       height: 70,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 184, 183, 183).withOpacity(0.5),
+        color: Color(0xfffc4530B2),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.white, width: 2.0),
       ),
@@ -178,7 +180,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
               Icon(
                 icon,
                 size: 30.0,
-                color: Colors.black,
+                color: Colors.white,
               ),
               SizedBox(width: 16),
               Text(
@@ -187,7 +189,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                   fontSize: 23.0,
                   fontFamily: 'Magdelin',
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.white.withOpacity(0.7),
                 ),
               ),
             ],
@@ -205,7 +207,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
       width: 300,
       height: 70,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 184, 183, 183).withOpacity(0.5),
+        color: Color(0xfffc4530B2),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.white, width: 2.0),
       ),
@@ -223,7 +225,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
               Icon(
                 icon,
                 size: 30.0,
-                color: Colors.black,
+                color: Colors.white,
               ),
               SizedBox(width: 16),
               Text(
@@ -232,7 +234,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                   fontSize: 23.0,
                   fontFamily: 'Magdelin',
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.white.withOpacity(0.7),
                 ),
               ),
             ],

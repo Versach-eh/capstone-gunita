@@ -315,6 +315,104 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
     });
   }
 
+  void restartGame() {
+  setState(() {
+    // Reset the game state
+    isGameStarted = false;
+    isGamePaused = false;
+    secondsElapsed = 0;
+    enteredWords = widget.enteredWords;
+    matchedWords = [];
+    currentWord = '';
+    initializePuzzle();
+  });
+}
+
+void resetGame() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
+        ),
+        backgroundColor: Color(0xfffcFFF9E3),
+        title: Text(
+          'Do you want to restart the game?',
+          style: TextStyle(
+            fontFamily: 'purple_smile',
+            fontSize: 24.0,
+            color: Colors.black,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                stopTimer(); // Stop the timer
+                Navigator.of(context).pop(); // Close the dialog
+                restartGame();
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Yes',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffcD63131),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.red.shade800.withOpacity(1.0),
+                elevation: 5,
+              ),
+              child: Text(
+                'No',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
   void showCongratulationsDialog(BuildContext context, Duration gameTime) {
     // Stop the game when all words are matched
     stopGame();
@@ -671,11 +769,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        isGamePaused = false; // Set the game as not paused
-                      });
-                      Navigator.of(context).pop(); // Close the dialog
-                      // Implement logic for restarting the game
+                      resetGame(); // Display quit confirmation dialog
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(230, 50),
@@ -776,7 +870,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                           child: Text(
                             'Time: ${formatDuration(Duration(seconds: secondsElapsed))}',
                             style: TextStyle(
-                              fontFamily: "purple_smile",
+                              fontFamily: "Magdelin",
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -818,7 +912,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                                   child: Text(
                                     puzzleGrid[row][col],
                                     style: TextStyle(
-                                      fontFamily: "purple_smile",
+                                      fontFamily: "Magdelin",
                                       fontSize:
                                           widget.difficulty == 2 ? 18 : 24,
                                       fontWeight: FontWeight.bold,
@@ -848,16 +942,13 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                     ),
                     SizedBox(width: 5),
                     GestureDetector(
-                      onTap: () {
-                        // Handle refresh icon tap
-                        // You can add logic to reset the puzzle or shuffle the letters
-                      },
-                      child: Icon(
-                        Icons.refresh,
-                        size: 35,
-                        color: Colors.white,
-                      ),
+                    onTap: () => resetGame(), // Call the confirmation dialog
+                    child: Icon(
+                      Icons.refresh,
+                      size: 35,
+                      color: Colors.white,
                     ),
+                  ),
                     SizedBox(width: 5),
                     GestureDetector(
                       onTap: pauseGame,
@@ -871,11 +962,11 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                 ),
               ),
               Positioned(
-                bottom: 110,
+                top: 620, // Change from 'bottom' to 'top'
                 left: 15,
                 right: 15,
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.vertical, // Change to vertical
                   child: Container(
                     height: 100,
                     decoration: BoxDecoration(
@@ -929,6 +1020,7 @@ class _WordSearchScreenState extends State<WordSearchScreen> {
                   ),
                 ),
               ),
+
               Positioned(
                 bottom: 45.0,
                 left: MediaQuery.of(context).size.width / 2 - 140.0,

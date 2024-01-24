@@ -110,10 +110,10 @@ class _GameLibraryState extends State<GameLibrary> {
                         );
                       } else if (imageData['path'] == 'assets/images/mam.gif') {
                         // Customize the navigation logic for Mam
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => MatchingMenuScreen()),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MatchingMenuScreen()),
+                        );
                       }
                     },
                     child: Column(

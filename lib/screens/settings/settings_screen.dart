@@ -33,7 +33,7 @@ class _MySettingsState extends State<MySettings> {
           padding: EdgeInsets.all(20.0),
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
               height: 40.0,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -53,9 +53,10 @@ class _MySettingsState extends State<MySettings> {
             ),
             SizedBox(height: 10.0),
             Text(
-              'MySettings',
+              'Settings',
               style: TextStyle(
-                fontSize: 30.0,
+                fontSize: 35.0,
+                fontFamily: 'Magdelin',
                 fontWeight: FontWeight.bold,
                 color: Color(0xff3b0d6b),
               ),
@@ -63,7 +64,7 @@ class _MySettingsState extends State<MySettings> {
             SizedBox(height: 5.0),
             _buildContainerWithText(
               'Account',
-              fontSize: 20.0,
+              fontSize: 23.0,
               color: Color(0xff8a8a8a),
               fontWeight: FontWeight.bold,
               children: [
@@ -76,6 +77,7 @@ class _MySettingsState extends State<MySettings> {
                       MaterialPageRoute(builder: (context) => Account()),
                     );
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
                 _buildListItemWithIcon(
                   text: 'Password and Security',
@@ -87,6 +89,7 @@ class _MySettingsState extends State<MySettings> {
                     );
                     // Navigate to password and security page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
                 _buildListItemWithIcon(
                   text: 'Statistics',
@@ -94,6 +97,7 @@ class _MySettingsState extends State<MySettings> {
                   onPressed: () {
                     // Navigate to statistics page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
               ],
               containerHeight: 140.0,
@@ -101,16 +105,17 @@ class _MySettingsState extends State<MySettings> {
             SizedBox(height: 5.0),
             _buildContainerWithText(
               'Preferences',
-              fontSize: 20.0,
+              fontSize: 23.0,
               color: Color(0xff8a8a8a),
               fontWeight: FontWeight.bold,
               children: [
                 _buildListItemWithIcon(
-                  text: 'Color MySettings',
+                  text: 'Color Settings',
                   icon: Icons.color_lens_outlined,
                   onPressed: () {
                     // Navigate to color settings page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
                 _buildListItemWithIcon(
                   text: 'Language',
@@ -118,6 +123,7 @@ class _MySettingsState extends State<MySettings> {
                   onPressed: () {
                     // Navigate to language page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
                 _buildListItemWithIcon(
                   text: 'Mobile Notifications',
@@ -125,6 +131,7 @@ class _MySettingsState extends State<MySettings> {
                   onPressed: () {
                     // Navigate to statistics page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
               ],
               containerHeight: 140.0,
@@ -132,7 +139,7 @@ class _MySettingsState extends State<MySettings> {
             SizedBox(height: 5.0),
             _buildContainerWithText(
               'Feedback',
-              fontSize: 20.0,
+              fontSize: 23.0,
               color: Color(0xff8a8a8a),
               fontWeight: FontWeight.bold,
               children: [
@@ -142,6 +149,7 @@ class _MySettingsState extends State<MySettings> {
                   onPressed: () {
                     // Navigate to account information page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
                 _buildListItemWithIcon(
                   text: 'Help',
@@ -149,6 +157,7 @@ class _MySettingsState extends State<MySettings> {
                   onPressed: () {
                     // Navigate to password and security page
                   },
+                  iconColor: Color(0xfffc4530B2), // Set the desired color for this icon
                 ),
               ],
               containerHeight: 100.0,
@@ -170,15 +179,16 @@ class _MySettingsState extends State<MySettings> {
                 child: Text(
                   "LOGOUT",
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 22.0,
+                    fontFamily: 'Magdelin',
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xff4f22cd),
+                  backgroundColor: Color(0xfffc4530B2),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                   minimumSize: Size(250.0, 50.0),
                 ),
@@ -244,6 +254,7 @@ class _MySettingsState extends State<MySettings> {
             text,
             style: TextStyle(
               fontSize: fontSize,
+              fontFamily: 'Magdelin',
               color: color,
               fontWeight: fontWeight,
             ),
@@ -267,24 +278,29 @@ class _MySettingsState extends State<MySettings> {
   }
 
   Widget _buildListItemWithIcon({
-    required String text,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    return InkWell(
-      onTap: onPressed,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          children: [
-            Icon(icon),
-            SizedBox(width: 8.0),
-            Text(text),
-          ],
-        ),
+  required String text,
+  required IconData icon,
+  required VoidCallback onPressed,
+  Color iconColor = Colors.black, // Added a default color parameter
+}) {
+  return InkWell(
+    onTap: onPressed,
+    child: Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: iconColor, // Use the provided color for the icon
+          ),
+          SizedBox(width: 8.0),
+          Text(text),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildNavigationButton(IconData icon, VoidCallback onPressed) {
     return IconButton(
