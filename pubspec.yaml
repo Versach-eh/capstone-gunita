@@ -33,6 +33,7 @@ dependencies:
   confetti: ^0.7.0    
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
+  video_thumbnail: ^0.5.3
  
   
   
@@ -73,6 +74,14 @@ flutter:
     - family: purple_smile
       fonts:
         - asset: fonts/purple_smile.ttf
+
+    - family: Poppins
+      fonts:
+        - asset: fonts/Poppins-ExtraBold.ttf
+
+    - family: MichlandScript
+      fonts:
+        - asset: fonts/MichlandScript.otf  
 
 
   uses-material-design: true

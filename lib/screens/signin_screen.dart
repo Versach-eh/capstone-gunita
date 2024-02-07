@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/forgot_password.dart';
+import 'package:gunita20/screens/get_started.dart';
 import 'package:gunita20/screens/home_screen.dart';
 import 'package:gunita20/screens/signup_screen.dart';
 
@@ -111,7 +112,10 @@ class _SignInScreenState extends State<SignInScreen> {
             child: IconButton(
               icon: Image.asset('assets/images/arrow_back.png'),
               onPressed: () {
-                Navigator.pop(context); // Return to the previous page
+                 Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CoverPage()),
+        );
               },
             ),
           ),

@@ -13,6 +13,8 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String repeatOption = 'No Repeat'; // Default repeat option
+  bool isNotificationEnabled = false; // Added state for notification toggle
+
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +86,15 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
           ),
           SizedBox(height: 20),
           buildElevatedButton(
-            text: 'Notifications',
-            icon: Icons.notifications,
-            onPressed: () {
-              // Handle Notifications button press
-            },
-          ),
+        text: 'Notifications: ${isNotificationEnabled ? 'ON' : 'OFF'}', // Display On/Off status
+        icon: Icons.notifications,
+        onPressed: () {
+          // Handle Notifications button press
+          setState(() {
+            isNotificationEnabled = !isNotificationEnabled; // Toggle notification state
+          });
+        },
+      ),
           SizedBox(height: 100),
           Center(
             child: Row(

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +9,10 @@ import 'package:gunita20/screens/gamelibrary_screen.dart';
 import 'package:gunita20/screens/home_screen.dart';
 import 'package:gunita20/screens/settings/settings_screen.dart';
 import 'package:gunita20/services/firebase_service.dart';
+import 'package:intl/intl.dart';
+
 
 class Album extends StatefulWidget {
-
   const Album({Key? key}) : super(key: key);
 
   @override
@@ -21,189 +20,235 @@ class Album extends StatefulWidget {
 }
 
 class _AlbumState extends State<Album> {
-    final FirebaseService firebaseService = FirebaseService();
-  List<MyAlbum> albums = [];
+  final FirebaseService firebaseService = FirebaseService();
+  late Stream<List<MyAlbum>> albumsStream; // Declare the stream
+    late String userName = ''; // Variable to store the user's name
+    late DateTime userBirthday = DateTime.now();
+    late String userAge = '';
+    late String formattedUserBirthday = '';
+
+
+
+
 
   @override
   void initState() {
     super.initState();
-    _loadAlbums();
+    albumsStream = _fetchAlbumsStream(); // Initialize the stream
+        _fetchUserName(); // Initialize the user's name
+
   }
 
-  Stream<List<AlbumWithThumbnail>> _fetchAlbumsStream() {
+  Future<void> _fetchUserName() async {
+  try {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference userDetailsCollection =
+        FirebaseFirestore.instance.collection('Users/$uid/UserDetails');
+
+    QuerySnapshot userDetailsQuery = await userDetailsCollection
+        .where('first name', isNotEqualTo: null)
+        .where('last name', isNotEqualTo: null)
+        .where('birthday', isNotEqualTo: null)
+        .limit(1)
+        .get();
+
+    if (userDetailsQuery.docs.isNotEmpty) {
+      DocumentSnapshot userDetailsSnapshot = userDetailsQuery.docs.first;
+      Map<String, dynamic> userDetails = userDetailsSnapshot.data() as Map<String, dynamic>;
+
+      DateTime birthday = userDetails['birthday']?.toDate() ?? DateTime.now();
+      String formattedBirthday = DateFormat('MMMM d, y').format(birthday);
+
+      DateTime today = DateTime.now();
+      int age = today.year - birthday.year - ((today.month > birthday.month || (today.month == birthday.month && today.day >= birthday.day)) ? 0 : 1);
+
+      setState(() {
+        userName = '${userDetails['first name']} ${userDetails['last name']}';
+        userBirthday = birthday;
+        formattedUserBirthday = formattedBirthday;
+        userAge = age.toString();
+      });
+    } else {
+      print('No UserDetails document found with required fields for UID: $uid');
+    }
+  } catch (error) {
+    print('Error fetching user details: $error');
+  }
+}
+
+
+
+
+
+
+  Stream<List<MyAlbum>> _fetchAlbumsStream() {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference albumsCollection =
         FirebaseFirestore.instance.collection('Users/$uid/albums');
 
-    return albumsCollection.snapshots().asyncMap((querySnapshot) async {
-      List<AlbumWithThumbnail> albumsWithThumbnail = [];
-
-      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+    return albumsCollection.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        String title = data['title'] ?? '';
-        List<String> imageUrls = data['imageUrls'] != null
-            ? List<String>.from(data['imageUrls'])
-            : [];
-
-        // Fetch the first image inside the album
-        String thumbnailUrl = imageUrls.isNotEmpty ? imageUrls[0] : '';
-
-        // Create an object containing album details and the thumbnail URL
-        AlbumWithThumbnail albumWithThumbnail =
-            AlbumWithThumbnail(title: title, thumbnailUrl: thumbnailUrl);
-
-        albumsWithThumbnail.add(albumWithThumbnail);
-      }
-
-      return albumsWithThumbnail;
+        return MyAlbum(
+          id: doc.id,
+          title: data['title'] ?? '',
+          imageUrls: data['imageUrls'] != null
+              ? List<String>.from(data['imageUrls'])
+              : [],
+        );
+      }).toList();
     });
   }
 
-
-    Future<void> _loadAlbums() async {
-    final List<MyAlbum> loadedAlbums = await firebaseService.getAlbums();
-    setState(() {
-      albums = loadedAlbums;
-    });
-  }
-
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 202, 202, 202),  // Set the background color here
-        body: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: MediaQuery.of(context).size.height / 1.6,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(60.0)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 20),
-                  Text(
-                    "Your Memories",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontFamily: 'Magdelin',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddAlbumScreen(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: const Color.fromARGB(255, 119, 119, 119).withOpacity(0.6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15), // Adjust padding as needed
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center, // Adjust the alignment of the text
-                      children: [
-                        SizedBox(width: 14),
-                        Text(
-                          'Create an album',
-                          style: TextStyle(
-                            fontSize: 24, // Adjust font size as needed
-                            fontFamily: 'Magdelin',
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                      _buildAlbumList(),
+      backgroundColor: Color.fromRGBO(217, 217, 217,1), 
+      body: StreamBuilder<List<MyAlbum>>(
+        stream: albumsStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
 
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
 
-                  
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.all(50),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                    color: Colors.white,
-                    width: 4.0,
+          List<MyAlbum> albums = snapshot.data ?? [];
+
+          return Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/album.png'),
+                      fit: BoxFit.fill,
+                      colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.5),
+                      BlendMode.darken,)
+                    )
                   ),
-                  color: Colors.white,
-                ),
-                padding: EdgeInsets.all(30), // Adjust padding as needed for the circle size
-                child: Icon(
-                  Icons.photo,
-                  size: 30, // Adjust the size of the icon
-                  color: Colors.black,
-                ),
-              ),
-                  SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: EdgeInsets.fromLTRB(10,40,10,90),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Test123",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Magdelin',
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Birthday:",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Magdelin',
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Age:",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Magdelin',
-                          color: Colors.black,
+                      SizedBox(width: 10),
+                      Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              userName,
+                              style: TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Magdelin',
+                                color: Colors.white,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                              "Age: $userAge years old",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Magdelin',
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 30,),
+                                Text(
+                                  "Birthday: $formattedUserBirthday",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontFamily: 'Magdelin',
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 1.6,
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(241, 245, 252, 1),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(60.0)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20),
+                      Text(
+                        "Your Memories",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontFamily: 'Magdelin',
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromRGBO(69, 48, 178, 1),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddAlbumScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(69, 48, 178, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 14),
+                            Text(
+                              'Create an album',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'Magdelin',
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      _buildAlbumList(albums),
+                    ],
+                  ),
+                ),
+              ),
+              
+            ],
+          );
+        },
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 224, 224, 224).withOpacity(0.1),
+          color: const Color.fromRGBO(158, 158, 158, 1).withOpacity(0.5),
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Row(
@@ -239,13 +284,21 @@ class _AlbumState extends State<Album> {
     );
   }
 
-  // WIDGET for displaying all the ALBUMS
-Widget _buildAlbumList() {
+  Widget _buildAlbumList(List<MyAlbum> albums) {
   return Expanded(
-    child: ListView.builder(
+    child: GridView.builder(
+      padding: EdgeInsets.all(8),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // Number of albums per row
+        crossAxisSpacing: 1.0, // Spacing between albums
+        mainAxisSpacing: 1.0, // Spacing between rows
+      ),
       itemCount: albums.length,
       itemBuilder: (context, index) {
         final album = albums[index];
+        final truncatedTitle = album.title.length > 20 // Set your desired limit
+            ? album.title.substring(0, 20) + '...' // Truncate and add ellipsis
+            : album.title;
         return InkWell(
           onTap: () {
             if (album.imageUrls.isNotEmpty) {
@@ -253,7 +306,7 @@ Widget _buildAlbumList() {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ImageDisplayScreen(
-                    albumId: album.id,  // Pass the album ID to ImageDisplayScreen
+                    albumId: album.id,
                     currentUser: null,
                     album: album,
                   ),
@@ -271,21 +324,42 @@ Widget _buildAlbumList() {
               );
             }
           },
+          
           child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Row(
+            padding: EdgeInsets.fromLTRB(16.0,16,16,16),
+            child: Column(
               children: [
-                // Display the first image as a thumbnail
                 album.imageUrls.isNotEmpty
-                    ? Image.network(
+                    ? 
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.network(
                         album.imageUrls[0],
-                        width: 50, // Adjust the size as needed
-                        height: 50,
+                        width: 190,
+                        height: 130,
                         fit: BoxFit.cover,
-                      )
-                    : Container(), // Placeholder if there's no image
+                      ),
+                    )
+                    : ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Container(
+                        width: 190, // Adjust the width to your desired size
+                        height: 130, // Adjust the height to your desired size
+                        color: Color.fromARGB(255, 228, 228, 228), // Light grey color
+                        child: Icon(
+                          Icons.image,
+                          size: 40, // Adjust the icon size
+                          color: const Color.fromRGBO(189, 189, 189, 1), // Darker grey color for the icon
+                        ),
+                      ),
+                    ),
                 SizedBox(width: 16.0),
-                Text(album.title),
+                Text(truncatedTitle,
+                style: TextStyle(
+                      fontSize: 16.0, // Adjust the font size to your desired size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -296,28 +370,14 @@ Widget _buildAlbumList() {
 }
 
 
-
   Widget _buildNavigationButton(IconData icon, VoidCallback onPressed) {
     return IconButton(
       icon: Icon(
         icon,
         size: 30.0,
-        color: const Color.fromARGB(255, 133, 133, 133),
+        color: Color.fromARGB(255, 133, 133, 133),
       ),
       onPressed: onPressed,
     );
   }
-
-  void _onTabTapped(int index) {
-    // Existing code...
-  }
 }
-
-class AlbumWithThumbnail {
-  final String title;
-  final String thumbnailUrl;
-
-  AlbumWithThumbnail({required this.title, required this.thumbnailUrl});
-}
-  
-  

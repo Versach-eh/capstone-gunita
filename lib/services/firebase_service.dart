@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gunita20/screens/album/album_model.dart';
+import 'package:gunita20/screens/album/video_model.dart';
 import 'package:gunita20/screens/jigsaw/game_difficulty.dart';
 import 'package:gunita20/screens/settings/account/conctact_info.dart';
 import 'package:gunita20/screens/settings/account/user_birthday.dart';
@@ -10,7 +11,6 @@ import 'package:gunita20/screens/settings/account/user_details.dart';
 
 class FirebaseService {
   final user = FirebaseAuth.instance.currentUser!;
-  
   
   late final CollectionReference albumsCollection =                       //auto creates firestore collection > album under user logged in
       FirebaseFirestore.instance.collection('Users/${user.uid}/albums');
@@ -38,7 +38,7 @@ class FirebaseService {
     await albumsCollection.add({
       'title': album.title,
       'imageUrls': album.imageUrls,
-      // 'imageTexts': album.imageTexts,
+      // 'imageTexts': album.imageTexts,main
     });
   }
 
@@ -49,6 +49,31 @@ class FirebaseService {
       'imageUrls': FieldValue.arrayUnion([imageUrl]),
     });
   }
+
+  Future<List<VideoModel>> getVideos(String albumId) async {
+  try {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser?.uid}/albums/$albumId/videos')
+        .get();
+
+    return querySnapshot.docs.map((doc) {
+      return VideoModel.fromDocument(doc);
+    }).toList();
+  } catch (e) {
+    // Handle errors
+    print('Error fetching videos: $e');
+    return [];
+  }
+}
+
+
+VideoModel _videoFromDocument(DocumentSnapshot document) {
+  return VideoModel(
+    id: document.id,
+    videoUrl: document['videoUrl'],
+     thumbnailUrl: document['thumbnailUrl'], description: '', title: '', // remove desc and title here and model
+  );
+}
 
   // UPDATE USER DETAILS AREA
 
@@ -136,7 +161,6 @@ class FirebaseService {
     });
   }
 
-  // record score under that difficulty
   Future<void> addScore(Difficulty difficulty) async {     
     await jigsawScoresCollection.add({
       'scoresTimerValues': difficulty.scoresTimerValues,
@@ -147,6 +171,11 @@ class FirebaseService {
   late final CollectionReference jigsawScoresCollection =
       FirebaseFirestore.instance.collection('Users/${user.uid}/Jigsaw');
 
+  Future<void> addScoreToList (String id, String scoresTimerValues) async {
+    await jigsawScoresCollection.doc(id).update({
+      'imageUrls': FieldValue.arrayUnion([scoresTimerValues]),
+    });
+  }
 }
 
   

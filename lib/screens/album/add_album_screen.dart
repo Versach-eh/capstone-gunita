@@ -79,13 +79,13 @@ class _AddAlbumScreenState extends State<AddAlbumScreen> {
                     Navigator.of(context).pop(); // Close button
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+                    primary: Colors.white,
                     fixedSize: const Size(150, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
-                  child: const Text('Cancel', style: TextStyle(fontSize: 20.0)),
+                  child: const Text('Cancel', style: TextStyle(fontSize: 20.0,color: Color.fromRGBO(69, 48, 178,1),)),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -93,12 +93,13 @@ class _AddAlbumScreenState extends State<AddAlbumScreen> {
                   },
                   
                   style: ElevatedButton.styleFrom(
+                    primary: const Color.fromRGBO(69, 48, 178,1),
                     fixedSize: const Size(150, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
-                  child: const Text('Next', style: TextStyle(fontSize: 20.0)),
+                  child: const Text('Next', style: TextStyle(fontSize: 20.0,color: Color.fromRGBO(255, 255, 255, 1))),
                 ),
               ],
             ),
@@ -109,6 +110,7 @@ class _AddAlbumScreenState extends State<AddAlbumScreen> {
   }
 }
 
+// DELETE THIS IF APP CONFLICT
 void main() {
   runApp(const MaterialApp(
     home: AddAlbumScreen(),

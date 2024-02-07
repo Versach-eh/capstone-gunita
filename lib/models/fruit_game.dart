@@ -85,7 +85,7 @@ class Game {
     imagePath = fruitImages[random.nextInt(fruitImages.length)];
   } while (icons.contains(imagePath));
   return imagePath;
-} 
+}
 
   List<int> _getVisibleCardIndexes() {
     return cards
@@ -100,4 +100,3 @@ class Game {
     return cards.every((card) => card.state == CardState.guessed);
   }
 }
-

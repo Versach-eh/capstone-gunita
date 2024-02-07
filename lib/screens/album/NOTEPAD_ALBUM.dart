@@ -1,300 +1,150 @@
-// // INCORPORATE JASPER'S DESIGN
 // // ignore_for_file: prefer_const_constructors
 
-// import 'package:flutter/material.dart';
-// import 'package:gunita20/screens/album/create_album_screen.dart';
-// import 'package:gunita20/screens/gamelibrary_screen.dart';
-// import 'package:gunita20/screens/home_screen.dart';
-// import 'package:gunita20/screens/settings/settings_screen.dart';
+// import 'dart:io';
 
-
-// class Album extends StatefulWidget {
-//   @override
-//   _AlbumState createState() => _AlbumState();
-// }
-
-// class _AlbumState extends State<Album> {
-//   int _hoveredIndex = -1;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: GestureDetector(
-//         onTap: () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => CreateAlbum(),
-//             ),
-//           );
-//         },
-//         child: Container(
-//           color: Color(0xff4f22cd),
-//           child: Stack(
-//             children: [
-//               Positioned(
-//                 top: MediaQuery.of(context).size.height * 0.40,
-//                 left: 0,
-//                 right: 0,
-//                 bottom: 0,
-//                 child: Container(
-//                   margin: EdgeInsets.symmetric(horizontal: 0.0),
-//                   decoration: BoxDecoration(
-//                     color: Colors.white,
-//                     borderRadius: BorderRadius.circular(40),
-//                   ),
-//                   child: Column(children: [
-//                     Padding(
-//                       padding: const EdgeInsets.only(top: 20.0),
-//                       child: Text(
-//                         'Your Memories',
-//                         style: TextStyle(
-//                           fontSize: 30,
-//                           fontWeight: FontWeight.bold,
-//                           color: Color(0xff3b0d6b),
-//                         ),
-//                       ),
-//                     ),
-//                     SizedBox(height: 20),
-//                     ElevatedButton(
-//                       onPressed: () {
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                               builder: (context) => CreateAlbum()),
-//                         );
-//                       },
-//                       child: Text(
-//                         "Create Album",
-//                         style: TextStyle(
-//                           fontSize: 20,
-//                           fontWeight: FontWeight.bold,
-//                           color: Colors.white,
-//                         ),
-//                       ),
-//                       style: ElevatedButton.styleFrom(
-//                         primary: Color(0xff4f22cd),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(15),
-//                         ),
-//                         minimumSize: Size(300, 60),
-//                       ),
-//                     ),
-//                   ]),
-//                 ),
-//               ),
-//               Positioned.fill(
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Expanded(
-//                       child: Container(
-//                         padding: EdgeInsets.all(20),
-//                         child: Text(
-//                           'Teresa Stonesteel',
-//                           style: TextStyle(
-//                             fontSize: 30,
-//                             fontWeight: FontWeight.bold,
-//                             color: Color(0xfffffeff),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-
-                    
-//                     Container(
-//                       padding: EdgeInsets.all(20),
-//                       decoration: BoxDecoration(
-//                         color: Colors.white.withOpacity(1.0),
-//                         borderRadius: BorderRadius.circular(5),
-//                       ),
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                         children: [
-//                           _buildNavigationButton(Icons.home, () {
-//                             Navigator.push(
-//                               context,
-//                               MaterialPageRoute(
-//                                 builder: (context) => HomeScreen(),
-//                               ),
-//                             );
-//                           }),
-//                           _buildNavigationButton(Icons.games, () {
-//                             Navigator.push(
-//                               context,
-//                               MaterialPageRoute(
-//                                 builder: (context) => GameLibrary(),
-//                               ),
-//                             );
-//                           }),
-//                           _buildNavigationButton(Icons.photo_album, () {
-//                             Navigator.push(
-//                               context,
-//                               MaterialPageRoute(
-//                                 builder: (context) => CreateAlbum(),
-//                               ),
-//                             );
-//                           }),
-//                           _buildNavigationButton(Icons.settings, () {
-//                             Navigator.push(
-//                               context,
-//                               MaterialPageRoute(
-//                                   builder: (context) => Settings()),
-//                             );
-//                           }),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildNavigationButton(IconData icon, VoidCallback onPressed) {
-//     return IconButton(
-//       icon: Icon(
-//         icon,
-//         size: 30,
-//         color: Color(0xff959595),
-//       ),
-//       onPressed: onPressed,
-//     );
-//   }
-// }
-
-// // albums_screen.dart
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
-// import 'package:gunita20/screens/album/add_album_screen.dart';
-// import 'package:gunita20/screens/album/album_images_screen.dart';
 // import 'package:gunita20/screens/album/album_model.dart';
-// import 'package:gunita20/services/firebase_service.dart';
+// import 'package:gunita20/screens/album/image_full_screen.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 
-// class Album extends StatefulWidget {
+// class ImageDisplayScreen extends StatefulWidget {
+//   final String albumId;
+//     final User? currentUser;
+//       final MyAlbum album;
+
+
+
+//   const ImageDisplayScreen({Key? key, required this.albumId, this.currentUser, required this.album}) : super(key: key);
+
 //   @override
-//   _AlbumState createState() => _AlbumState();
+//   _ImageDisplayScreen createState() => _ImageDisplayScreen();
 // }
 
-// class _AlbumState extends State<Album> {
-//   final FirebaseService firebaseService = FirebaseService();
-//   List<MyAlbum> albums = [];
-
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//   // testing
-
-//   Future<User?> _getUser() async {
-//     return _auth.currentUser;
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadAlbums();
-//   }
-
-//   Future<void> _loadAlbums() async {
-//     final List<MyAlbum> loadedAlbums = await firebaseService.getAlbums();
-//     setState(() {
-//       albums = loadedAlbums;
-//     });
-//   }
+// class _ImageDisplayScreen extends State<ImageDisplayScreen> {
+//   Stream<List<String>> _imageStream = yourImageStreamFunction(); // Replace with your actual function
+//   Stream<List<String>> _videoStream = yourVideoStreamFunction(); // Replace with your actual function
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text('Albums'),
+//         title: Text('Your App Title'),
 //       ),
-//       // body: ListView.builder(
-//       //   itemCount: albums.length,
-//       //   itemBuilder: (context, index) {
-//       //     final album = albums[index];
-//       //     return ListTile(
-//       //       title: Text(album.title),
-//       //       onTap: () {
-//       //         Navigator.push(
-//       //           context,
-//       //           MaterialPageRoute(
-//       //             builder: (context) => AlbumImagesScreen(album: album),
-//       //           ),
-//       //         );
-//       //       },
-//       //     );
-//       //   },
-//       // ),
-//       body: FutureBuilder<User?>(
-//         future: _getUser(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.done) {
-//             if (snapshot.data != null) {
-//               return AlbumList(currentUser: snapshot.data!);
-//             } else {
-//               return CircularProgressIndicator();
-//             }
-//           } else {
-//             return CircularProgressIndicator();
-//           }
-//         },
-//       ),
-
-
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => AddAlbumScreen(),
-//             ),
-//           );
-//         },
-//         child: Icon(Icons.add),
+//       body: Column(
+//         children: [
+//           StreamBuilder<List<String>>(
+//             stream: _imageStream,
+//             builder: (context, imageSnapshot) {
+//               if (imageSnapshot.connectionState == ConnectionState.waiting) {
+//                 return CircularProgressIndicator();
+//               } else if (imageSnapshot.hasError) {
+//                 return Text("Error: ${imageSnapshot.error}");
+//               } else {
+//                 List<String> imageUrls = imageSnapshot.data ?? [];
+//                 return GridView.builder(
+//                   // Build UI using imageUrls
+//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                     crossAxisCount: 2,
+//                     crossAxisSpacing: 4.0,
+//                     mainAxisSpacing: 4.0,
+//                   ),
+//                   itemCount: imageUrls.length,
+//                   itemBuilder: (context, index) {
+//                     return Image.network(imageUrls[index]);
+//                   },
+//                 );
+//               }
+//             },
+//           ),
+//           StreamBuilder<List<String>>(
+//             stream: _videoStream,
+//             builder: (context, videoSnapshot) {
+//               if (videoSnapshot.connectionState == ConnectionState.waiting) {
+//                 return CircularProgressIndicator();
+//               } else if (videoSnapshot.hasError) {
+//                 return Text("Error: ${videoSnapshot.error}");
+//               } else {
+//                 List<String> videoUrls = videoSnapshot.data ?? [];
+//                 return GridView.builder(
+//                   // Build UI using videoUrls
+//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                     crossAxisCount: 2,
+//                     crossAxisSpacing: 4.0,
+//                     mainAxisSpacing: 4.0,
+//                   ),
+//                   itemCount: videoUrls.length,
+//                   itemBuilder: (context, index) {
+//                     return VideoWidget(videoUrl: videoUrls[index]);
+//                   },
+//                 );
+//               }
+//             },
+//           ),
+//         ],
 //       ),
 //     );
 //   }
 // }
 
+// class VideoWidget extends StatelessWidget {
+//   final String videoUrl;
 
-
-// class AlbumList extends StatelessWidget {       //  Uses StreamBuilder to display albums real time
-//   final User currentUser;
-
-//   AlbumList({required this.currentUser});
+//   const VideoWidget({Key? key, required this.videoUrl}) : super(key: key);
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return StreamBuilder<QuerySnapshot>(
-//       stream: FirebaseFirestore.instance.collection('users/${currentUser.uid}/albums').snapshots(),
-//       builder: (context, snapshot) {
-//         if (snapshot.hasData) {
-//           final albums = snapshot.data!.docs.map((doc) => MyAlbum(id: doc.id, title: doc['title'], imageUrls: [])).toList();
-//           return ListView.builder(
-//             itemCount: albums.length,
-//             itemBuilder: (context, index) {
-//               final album = albums[index];
-//               return ListTile(
-//                 title: Text(album.title),
-//                 onTap: () {
-//                   Navigator.push(
-//                     context,
-//                     MaterialPageRoute(
-//                       builder: (context) => AlbumImagesScreen(currentUser: currentUser, album: album),
-//                     ),
-//                   );
-//                 },
-//               );
-//             },
-//           );
-//         } else {
-//           return CircularProgressIndicator();
-//         }
-//       },
+//     return AspectRatio(
+//       aspectRatio: 16 / 9,
+//       child: VideoPlayerWidget(videoUrl: videoUrl),
 //     );
 //   }
+// }
+
+// class VideoPlayerWidget extends StatelessWidget {
+//   final String videoUrl;
+
+//   const VideoPlayerWidget({Key? key, required this.videoUrl}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Implement your video player widget here
+//     // You might want to use a package like chewie or video_player
+//     // Example: ChewieVideoPlayer(url: videoUrl);
+//     return Container(
+//       color: Colors.black,
+//       child: Center(
+//         child: Text('Video Player Placeholder'),
+//       ),
+//     );
+//   }
+// }
+
+// Stream<List<String>> yourImageStreamFunction() {
+//   // Implement your image stream logic here
+//   // For example, fetch data from Firestore
+//   return FirebaseFirestore.instance
+//       .collection('your_image_collection')
+//       .snapshots()
+//       .map((snapshot) {
+//     return snapshot.docs
+//         .map((doc) => doc['imageUrl'] as String)
+//         .toList();
+//   });
+// }
+
+// Stream<List<String>> yourVideoStreamFunction() {
+//   // Implement your video stream logic here
+//   // For example, fetch data from Firestore
+//   return FirebaseFirestore.instance
+//       .collection('your_video_collection')
+//       .snapshots()
+//       .map((snapshot) {
+//     return snapshot.docs
+//         .map((doc) => doc['videoUrl'] as String)
+//         .toList();
+//   });
 // }

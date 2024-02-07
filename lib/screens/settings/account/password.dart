@@ -8,7 +8,6 @@ import 'package:gunita20/screens/settings/settings_screen.dart';
 import 'edit_bd.dart';
 
 class Password extends StatelessWidget {
-  final int _hoveredIndex = -1;
   final user = FirebaseAuth.instance.currentUser!;
 
   Password({Key? key}) : super(key: key);
@@ -27,28 +26,11 @@ class Password extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white, width: 1),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  hintStyle: TextStyle(
-                    color: Color(0xff8a8a8a),
-                  ),
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 30),
+           
+            const SizedBox(height: 100),
             const Text(
               'Password and Security',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 29,
                 fontWeight: FontWeight.bold,
@@ -56,15 +38,6 @@ class Password extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-            const Text(
-              'Account Information',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.normal,
-                color: Color(0xff959595),
-              ),
-            ),
-            const SizedBox(height: 0),
             _buildContainerWithText(
               text: '',
               children: [
@@ -159,14 +132,18 @@ class Password extends StatelessWidget {
             ),
           ),
           Container(
-            width: double.infinity,
-            height: containerHeight,
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+          width: double.infinity,
+          height: containerHeight,
+          margin: EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all( // Add this line to set borderSide
+              color: Color(0xfffc4530B2), // Set your desired border color
+              width: 1.0, // Set your desired border width
             ),
+          ),
             child: Column(
               children: children,
             ),
@@ -202,7 +179,7 @@ class Password extends StatelessWidget {
             const Icon(
               Icons.arrow_forward_ios,
               size: 18,
-              color: Colors.grey,
+              color: Color(0xfffc4530B2),
             ),
           ],
         ),

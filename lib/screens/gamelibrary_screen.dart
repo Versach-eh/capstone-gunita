@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gunita20/game_history/history.dart';
 import 'package:gunita20/screens/crossword/word_menu.dart';
 import 'package:gunita20/screens/jigsaw/menu.dart';
-// import 'package:gunita20/screens/matching/menu.dart';
 import 'package:gunita20/screens/home_screen.dart';
 import 'package:gunita20/screens/album/album_screen.dart';
 import 'package:gunita20/screens/matching/menu.dart';
@@ -42,52 +41,65 @@ class _GameLibraryState extends State<GameLibrary> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
+            // Header Section with Background Image
             Container(
-              padding: const EdgeInsets.all(15),
-              color: Color(0xfffcF0F4FC),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/game.png'), // replace with your image path
+                  fit: BoxFit.cover,
+                ),
+              ),
               child: Stack(
-                alignment: Alignment.center,
+                alignment: Alignment.centerLeft,
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: 40),
+                      SizedBox(height: 50),
                       Text(
                         'Your Game Library',
                         style: TextStyle(
                           fontSize: 30,
                           fontFamily: 'Magdelin',
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                   Positioned(
-                    top: 33,
-                    right: 10,
+                  top: 40,
+                  right: 10,
+                  child: Container(
+                    width: 52, // Adjust this value to change the width and size of the circle
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xfffc4530B2), // Change the color to your desired color
+                    ),
+                    padding: EdgeInsets.all(2),
                     child: IconButton(
                       icon: Icon(
-                        Icons.account_circle_outlined,
-                        size: 40,
-                        color: Color(0xfffc4530B2),
+                        Icons.analytics_outlined,
+                        size: 30,
+                        color: Colors.white,
                       ),
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => GameHistory()),
+                          MaterialPageRoute(builder: (context) => GameHistory()),
                         );
                       },
                     ),
                   ),
+                ),
                 ],
               ),
             ),
 
             // Images Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               child: Column(
                 children: gif.map((imageData) {
                   return GestureDetector(
@@ -112,7 +124,8 @@ class _GameLibraryState extends State<GameLibrary> {
                         // Customize the navigation logic for Mam
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => MatchingMenuScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => MatchingMenuScreen()),
                         );
                       }
                     },

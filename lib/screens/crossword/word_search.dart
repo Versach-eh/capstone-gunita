@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gunita20/screens/crossword/word_category.dart';
+import 'package:gunita20/screens/crossword/word_menu.dart';
 import 'package:gunita20/screens/gamelibrary_screen.dart';
 import 'dart:math';
 import 'dart:async';
@@ -495,7 +497,7 @@ void resetGame() {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => GameLibrary(),
+                            builder: (context) => CrosswordMenuScreen(),
                           ),
                         );
                       },
@@ -966,7 +968,7 @@ void resetGame() {
                 left: 15,
                 right: 15,
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical, // Change to vertical
+                  scrollDirection: Axis.horizontal, // Change to vertical
                   child: Container(
                     height: 100,
                     decoration: BoxDecoration(

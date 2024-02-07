@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/crossword/enter_word.dart';
+import 'package:gunita20/screens/crossword/hard_theme.dart';
+import 'package:gunita20/screens/crossword/moderate_theme.dart';
+import 'package:gunita20/screens/crossword/theme.dart';
+
 
 class CategoryWordMenuScreen extends StatefulWidget {
   const CategoryWordMenuScreen({Key? key}) : super(key: key);
@@ -9,6 +13,379 @@ class CategoryWordMenuScreen extends StatefulWidget {
 }
 
 class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
+  void _showDialog() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
+        ),
+        backgroundColor: Color(0xfffcFFF9E3),
+        title: Text(
+          'What do you prefer?',
+          style: TextStyle(
+            fontFamily: 'purple_smile',
+            fontSize: 24.0,
+            color: Colors.black,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ThemesMenuScreen(
+                          ),
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Use existing themes',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnterWordScreen(
+                            maxAllowedWords: 4,
+                            difficulty: 0,
+                          ),
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Create own words',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffcD63131),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.red.shade800.withOpacity(1.0),
+                elevation: 5,
+              ),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+void _showDialogM() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
+        ),
+        backgroundColor: Color(0xfffcFFF9E3),
+        title: Text(
+          'What do you prefer?',
+          style: TextStyle(
+            fontFamily: 'purple_smile',
+            fontSize: 24.0,
+            color: Colors.black,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ModerateThemesMenuScreen(
+                          ),
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Use existing themes',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnterWordScreen(
+                            maxAllowedWords: 5,
+                            difficulty: 1,
+                          ),
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Create own words',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffcD63131),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.red.shade800.withOpacity(1.0),
+                elevation: 5,
+              ),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+void _showDialogH() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          side: BorderSide(color: Color(0xfffcE17612), width: 7.0),
+        ),
+        backgroundColor: Color(0xfffcFFF9E3),
+        title: Text(
+          'What do you prefer?',
+          style: TextStyle(
+            fontFamily: 'purple_smile',
+            fontSize: 24.0,
+            color: Colors.black,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HardThemesMenuScreen(
+                          ),
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Use existing themes',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EnterWordScreen(
+                            maxAllowedWords: 6,
+                            difficulty: 2,
+                          ),
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffc36C655),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.green.shade800.withOpacity(0.8),
+                elevation: 5,
+              ),
+              child: Text(
+                'Create own words',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(225, 45),
+                primary: Color(0xffcD63131),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 3.0,
+                  ),
+                ),
+                shadowColor: Colors.red.shade800.withOpacity(1.0),
+                elevation: 5,
+              ),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'purple_smile',
+                  color: Colors.white,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+  
+  
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,16 +483,20 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EnterWordScreen(
-                            maxAllowedWords: 4,
-                            difficulty: 0,
-                          ),
-                        ),
-                      );
+            // Show dialog when Easy button is pressed
+                      _showDialog();
                     },
+                    // onPressed: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => EnterWordScreen(
+                    //         maxAllowedWords: 4,
+                    //         difficulty: 0,
+                    //       ),
+                    //     ),
+                    //   );
+                    // },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
                       primary: Color(
@@ -154,23 +535,21 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EnterWordScreen(
-                            maxAllowedWords: 6,
-                            difficulty: 1,
-                          ),
-                        ),
-                      );
-                      // Change CategoryWordMenuScreen to TheMemoryMatchGame
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => TheMemoryMatchGame(),
-                      //   ),
-                      // );
+            // Show dialog when Easy button is pressed
+                      _showDialogM();
                     },
+                    
+                    // onPressed: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => EnterWordScreen(
+                    //         maxAllowedWords: 6,
+                    //         difficulty: 1,
+                    //       ),
+                    //     ),
+                    //   );
+                    // },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
                       primary: Color(
@@ -209,22 +588,21 @@ class _CategoryWordMenuScreenState extends State<CategoryWordMenuScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EnterWordScreen(
-                            maxAllowedWords: 8,
-                            difficulty: 2,
-                          ),
-                        ),
-                      );
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => FruitTheMemoryMatchGame(),
-                      //   ),
-                      // );
+            // Show dialog when Easy button is pressed
+                      _showDialogH();
                     },
+                  // child: ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => EnterWordScreen(
+                  //           maxAllowedWords: 8,
+                  //           difficulty: 2,
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
                       primary: Color(

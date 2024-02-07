@@ -309,6 +309,7 @@ class _PreSignUpScreenState extends State<PreSignUpScreen> {
                                 _firstNameTextController.text.trim(),
                                 _middleNameTextController.text.trim(),
                                 gender.trim(),
+                                selectedDate!,
                               );
 
                               Navigator.of(context).pushAndRemoveUntil(
@@ -352,6 +353,7 @@ class _PreSignUpScreenState extends State<PreSignUpScreen> {
     String firstName,
     String middleName,
     String gender,
+    DateTime birthday,
   ) async {
     final user = FirebaseAuth.instance.currentUser!;
     await FirebaseFirestore.instance.collection('Users/${user.uid}/UserDetails').add({
@@ -360,6 +362,7 @@ class _PreSignUpScreenState extends State<PreSignUpScreen> {
       'middle name': middleName,
       'name extension': _nameExtensionTextController.text.trim(),
       'gender': gender,
+      'birthday': birthday,
     });
   }
 

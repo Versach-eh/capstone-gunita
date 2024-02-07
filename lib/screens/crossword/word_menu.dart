@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gunita20/screens/crossword/word_category.dart';
 import 'package:gunita20/screens/crossword/instruction.dart';
 import 'package:gunita20/screens/crossword/word_easy_scoreboard.dart';
+import 'package:gunita20/screens/gamelibrary_screen.dart';
 
 class CrosswordMenuScreen extends StatefulWidget {
   const CrosswordMenuScreen({Key? key}) : super(key: key);
@@ -88,8 +89,12 @@ class _CrosswordMenuScreenState extends State<CrosswordMenuScreen> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Dismiss the dialog
-                    Navigator.of(context).pop(); // Return to the previous page
+                    Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameLibrary(),
+                          ),
+                        );
                   },
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(230, 50),

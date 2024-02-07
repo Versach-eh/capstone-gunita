@@ -1,68 +1,27 @@
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/album/album_model.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:gunita20/screens/loading.dart';
-
-import 'image_model.dart';
+import 'package:gunita20/screens/album/video_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class UploadVideoScreen extends StatefulWidget {
+  final MyAlbum album;
+
+  const UploadVideoScreen({super.key, required this.album});
+
   @override
   _UploadVideoScreenState createState() => _UploadVideoScreenState();
 }
 
 class _UploadVideoScreenState extends State<UploadVideoScreen> {
-  List<ImageModel> images = [];
-  List<String> _imageUrls = [];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _imageUrls = widget.album.imageUrls;
-  // }
-
-  // Future<void> _uploadImageToFirebase() async {
-  //   final user = FirebaseAuth.instance.currentUser!;
-
-  //   final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     final ref = firebase_storage.FirebaseStorage.instance
-  //         .ref()
-  //         .child('Users/${widget.currentUser.uid}/albums/${widget.album.id}/${pickedFile.path.split('/').last}');
-  //     final uploadTask = ref.putFile(
-  //       File(pickedFile.path),
-  //       firebase_storage.SettableMetadata(contentType: 'image/jpeg'),
-  //     );
-
-  //     await uploadTask.whenComplete(() async {
-  //       showDialog(
-  //         context: context,
-  //         builder: (context) {
-  //           return Loading();
-  //         },
-  //       );
-
-  //       String downloadUrl = await ref.getDownloadURL();
-
-  //       setState(() {
-  //         images.add(ImageModel(id: images.length.toString(), imageUrl: downloadUrl, textInfo: ""));
-  //       });
-
-  //       widget.album.imageUrls.add(downloadUrl);
-
-  //       CollectionReference _firestoreReference = FirebaseFirestore.instance.collection('Users/${user.uid}/albums');
-  //       late Stream<QuerySnapshot> _stream;
-  //       _stream = _firestoreReference.snapshots();
-
-  //       _firestoreReference.doc(widget.album.id).update({
-  //         'imageUrls': FieldValue.arrayUnion([downloadUrl]),
-  //       });
-  //     });
-  //   }
-  // }
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +59,15 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          // Your new logic here, if needed
+                        onPressed: () async {
+                          await _uploadVideoToFirebase();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VideoDisplayScreen(albumId: widget.album.id, album: widget.album,),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(220, 200),
@@ -143,7 +109,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                   child: Icon(
                     Icons.arrow_back,
                     color: Colors.black,
-                    size: 35, // adjust the size of the icon
+                    size: 35,
                   ),
                 ),
               ),
@@ -151,107 +117,66 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Color(0xff4f22cd),
-      //   onPressed: () {
-      //     // Your new logic here, if needed
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
     );
+  }
+
+  Future<void> _uploadVideoToFirebase() async {
+  final user = FirebaseAuth.instance.currentUser!;
+  final pickedFile = await _imagePicker.pickVideo(source: ImageSource.gallery);
+
+  if (pickedFile != null) {
+    final thumbnail = await _generateThumbnail(pickedFile.path);
+
+    final videoRef = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child('Users/${user.uid}/albums/${widget.album.id}/videos/${pickedFile.path.split('/').last}');
+
+    final thumbnailRef = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child('Users/${user.uid}/albums/${widget.album.id}/thumbnails/${pickedFile.path.split('/').last}.jpg');
+
+    final uploadVideoTask = videoRef.putFile(
+      File(pickedFile.path),
+      firebase_storage.SettableMetadata(contentType: 'video/mp4'),
+    );
+
+    final uploadThumbnailTask = thumbnailRef.putData(thumbnail);
+
+    // Use separate await statements for clarity
+    await uploadVideoTask;
+    await uploadThumbnailTask;
+
+    final videoDownloadUrl = await videoRef.getDownloadURL();
+    final thumbnailDownloadUrl = await thumbnailRef.getDownloadURL();
+
+    // Update Firestore document
+    CollectionReference _firestoreReference =
+        FirebaseFirestore.instance.collection('Users/${user.uid}/albums');
+
+    DocumentReference albumDocRef = _firestoreReference.doc(widget.album.id);
+    CollectionReference videosCollectionRef = albumDocRef.collection('videos');
+    DocumentReference videoDocRef = videosCollectionRef.doc();
+
+    // Use a transaction to handle the case where the document might not exist
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.set(videoDocRef, {
+        'videoUrl': videoDownloadUrl,
+        'thumbnailUrl': thumbnailDownloadUrl,
+        'title': 'Video Title', // You can set this dynamically based on user input
+        'description': 'Video Description', // You can set this dynamically based on user input
+      });
+    });
   }
 }
 
-//   Widget _buildImageGrid(BuildContext context) {
-//     return GridView.builder(
-//       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//         crossAxisCount: 3,
-//       ),
-//       itemCount: images.length,
-//       itemBuilder: (context, index) {
-//         final image = images[index];
 
-//         return GestureDetector(
-//           onTap: () {
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(
-//                 builder: (context) => ImageWithTextScreen(image: image),
-//               ),
-//             );
-//           },
-//           child: Container(
-//             decoration: BoxDecoration(
-//               image: DecorationImage(
-//                 image: NetworkImage(image.imageUrl),
-//                 fit: BoxFit.cover,
-//               ),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 
-// class ImageWithTextScreen extends StatefulWidget {
-//   final ImageModel image;
-
-//   const ImageWithTextScreen({Key? key, required this.image}) : super(key: key);
-
-//   @override
-//   _ImageWithTextScreenState createState() => _ImageWithTextScreenState();
-// }
-
-// class _ImageWithTextScreenState extends State<ImageWithTextScreen> {
-//   final TextEditingController _textEditingController = TextEditingController();
-
-//   @override
-//   void dispose() {
-//     _textEditingController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(' ${widget.image.textInfo}'),
-//         backgroundColor: Color(0xff4f22cd),
-//       ),
-//       body: Column(
-//         children: [
-//           Expanded(
-//             child: GestureDetector(
-//               onTap: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => PhotoView(imageProvider: NetworkImage(widget.image.imageUrl)),
-//                   ),
-//                 );
-//               },
-//               child: Image.network(widget.image.imageUrl),
-//             ),
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.all(16.0),
-//             child: TextField(
-//               controller: _textEditingController,
-//               decoration: InputDecoration(
-//                 labelText: 'Edit the title for this image',
-//                 labelStyle: TextStyle(fontSize: 23),
-//                 border: OutlineInputBorder(),
-//               ),
-//               onChanged: (value) {
-//                 setState(() {
-//                   widget.image.textInfo = value;
-//                 });
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  Future<Uint8List> _generateThumbnail(String videoPath) async {
+    final uint8List = await VideoThumbnail.thumbnailData(
+      video: videoPath,
+      imageFormat: ImageFormat.JPEG,
+      quality: 100,
+    );
+    return uint8List!;
+  }
+}

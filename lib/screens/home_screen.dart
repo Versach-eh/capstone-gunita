@@ -232,6 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfffcE5F3FF),
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
@@ -240,253 +241,241 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         strokeWidth: 4,
         child: isLoading
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+  ? Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 8,
+            strokeCap: StrokeCap.round,
+          ),
+        )
+      ],
+    )
+  : ListView(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Column(
+            children: [
+              ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 8,
-                      strokeCap: StrokeCap.round,
-                    ),
-                  )
-                ],
-              )
-            : ListView(
-                children: [
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 70.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Your Reminders',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 36.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Magdelin',
-                            ),
-                          ),
-                          SizedBox(height: 50),
-                          isLoading
-                              ? SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 2,
-                                  child: Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 8,
-                                  )),
-                                )
-                              : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        StreamBuilder<int>(
-                                            stream: onThisDayQuantityStream,
-                                            builder: (context, snapshot) {
-                                              int quantity = snapshot.data ?? 0;
-
-                                              return InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            TodayScreen()),
-                                                  );
-                                                },
-                                                customBorder:
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15))),
-                                                child: _buildAdjustableBox(
-                                                  width: 170,
-                                                  height: 150,
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'On this day',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 23,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily: 'Magdelin',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  quantity: quantity,
-                                                ),
-                                              );
-                                            }),
-                                        SizedBox(height: 10),
-                                        StreamBuilder<int>(
-                                            stream: onThisWeekQuantityStream,
-                                            builder: (context, snapshot) {
-                                              int quantity = snapshot.data ?? 0;
-
-                                              return InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            WeekScreen()),
-                                                  );
-                                                },
-                                                customBorder:
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15))),
-                                                child: _buildAdjustableBox(
-                                                  width: 170,
-                                                  height: 150,
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'On this week',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 23,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily: 'Magdelin',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  quantity: quantity,
-                                                ),
-                                              );
-                                            }),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        StreamBuilder<int>(
-                                            stream: unresolvedQuantityStream,
-                                            builder: (context, snapshot) {
-                                              int quantity = snapshot.data ?? 0;
-
-                                              return InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            UnresolvedScreen()),
-                                                  );
-                                                },
-                                                customBorder:
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15))),
-                                                child: _buildAdjustableBox(
-                                                  width: 170,
-                                                  height: 150,
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'Unresolved',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 23,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily: 'Magdelin',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  quantity: quantity,
-                                                ),
-                                              );
-                                            }),
-                                        SizedBox(height: 10),
-                                        StreamBuilder<int>(
-                                            stream: completedQuantityStream,
-                                            builder: (context, snapshot) {
-                                              int quantity = snapshot.data ?? 0;
-
-                                              return InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            CompletedScreen()),
-                                                  );
-                                                },
-                                                customBorder:
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15))),
-                                                child: _buildAdjustableBox(
-                                                  width: 170,
-                                                  height: 150,
-                                                  color: Colors.grey
-                                                      .withOpacity(0.3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'Completed',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 23,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily: 'Magdelin',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  quantity: quantity,
-                                                ),
-                                              );
-                                            }),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                        ],
+                  Image.asset(
+                    'assets/images/home.png',
+                    width: 350,
+                    height: 180,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    top: 85,
+                    left: 15, // Adjust the top position as needed
+                    child: Text(
+                      'Hello!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Magdelin',
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+                  Positioned(
+                    bottom: 25,
+                    left: 15, // Adjust the bottom position as needed
+                    child: Text(
+                      'Welcome to GUNITA',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontFamily: 'Magdelin',
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+              SizedBox(height: 10),
+                Text(
+                  'Your Reminders',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Magdelin',
+                  ),
+                ),
+                SizedBox(height: 10),
+                isLoading
+                  ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        strokeWidth: 8,
+                      )),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          children: [
+                            StreamBuilder<int>(
+                              stream: onThisDayQuantityStream,
+                              builder: (context, snapshot) {
+                                int quantity = snapshot.data ?? 0;
+
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => TodayScreen()),
+                                    );
+                                  },
+                                  customBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.asset(
+                                          'assets/images/blue.png', // Replace with the actual path to your image asset
+                                          width: 170,
+                                          height: 150,
+                                          fit: BoxFit.cover, // Adjust the fit as needed
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Container(
+                                          width: 28,
+                                          height: 28,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: quantity > 0
+                                                ? Color(0xfffc4530B2)
+                                                : Colors.white.withOpacity(1.0),
+                                            border: Border.all(color: Colors.black, width: 2),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              quantity.toString(),
+                                              style: TextStyle(
+                                                color: quantity > 0 ? Colors.white : Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 20,
+                                        left: 28,
+                                        child: Text(
+                                          'On this day',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'Magdelin',
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(width: 10),
+                            StreamBuilder<int>(
+                              stream: onThisWeekQuantityStream,
+                              builder: (context, snapshot) {
+                                int quantity = snapshot.data ?? 0;
+
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => WeekScreen()),
+                                    );
+                                  },
+                                  customBorder: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.asset(
+                                          'assets/images/blue.png', // Replace with the actual path to your image asset
+                                          width: 170,
+                                          height: 150,
+                                          fit: BoxFit.cover, // Adjust the fit as needed
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Container(
+                                          width: 28,
+                                          height: 28,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: quantity > 0
+                                                ? Color(0xfffc4530B2)
+                                                : Colors.white.withOpacity(1.0),
+                                            border: Border.all(color: Colors.black, width: 2),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              quantity.toString(),
+                                              style: TextStyle(
+                                                color: quantity > 0 ? Colors.white : Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 20,
+                                        left: 24,
+                                        child: Text(
+                                          'On this week',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 24,
+                                            fontFamily: 'Magdelin',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 1), // Adjust the height as needed
+              ],
+            ),
+          ),
+        ),
                   categoryNames.isEmpty
                       ? SizedBox()
                       : Padding(
-                          padding: const EdgeInsets.fromLTRB(28, 40, 28, 10),
+                          padding: const EdgeInsets.fromLTRB(30, 30, 28, 10),
                           child: Text(
                             "Your Categories",
                             style: TextStyle(
@@ -520,17 +509,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                           decoration: ShapeDecoration(
                                             shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(15))),
+                                                    Radius.circular(20))),
                                             color: Color(int.parse(
                                                 categoryColors[index])),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0, vertical: 15),
+                                                horizontal: 8.0, vertical: 9),
                                             child: Row(
                                               children: [
                                                 Icon(Icons
-                                                    .label_outline_rounded, size: 35,),
+                                                    .label_outline_rounded, size: 25,),
                                                 SizedBox(
                                                   width: 10,
                                                 ),
@@ -552,53 +541,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ],
                                   );
-                                  // return ElevatedButton.icon(
-                                  //     onPressed: () {},
-                                  //     style: ButtonStyle(
-                                  //       foregroundColor:
-                                  //           MaterialStatePropertyAll(Colors.black),
-                                  //       backgroundColor: MaterialStatePropertyAll(
-                                  //           Color(int.parse(categoryColors[index]))),
-                                  //     ),
-                                  //     icon: Icon(Icons.label_rounded),
-                                  //     label: Text(categoryNames[index]));
+                                  
                                 }),
                           ),
                         ),
-                  // Positioned(
-                  //   bottom: 30,
-                  //   right: 20,
-                  //   child: Container(
-                  //     width: 180,
-                  //     height: 60,
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.grey.withOpacity(0.5),
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     child: TextButton(
-                  //       onPressed: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => ReminderScreen()),
-                  //         );
-                  //       },
-                  //       child: Text(
-                  //         'Add reminder',
-                  //         style: TextStyle(
-                  //           fontSize: 18,
-                  //           color: Colors.black,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
       ),
       floatingActionButton: Container(
           width: 200, // Adjust the width as needed
-          height: 65, // Adjust the height as needed
+          height: 60, // Adjust the height as needed
           child: FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(

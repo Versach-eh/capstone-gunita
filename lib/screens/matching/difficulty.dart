@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gunita20/screens/matching/category.dart';
 // import 'package:gunita20/screens/matching/category.dart';
 import 'package:gunita20/ui/pages/memory_match_page.dart';
 
@@ -48,8 +49,12 @@ class _MatchingDifficultyScreenState extends State<MatchingDifficultyScreen> {
           alignment: Alignment.topLeft,
           child: GestureDetector(
             onTap: () {
-              // Handle back button press
-              Navigator.pop(context);
+             Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryMatchingMenuScreen(),
+                        ),
+                      );
             },
             child: Container(
               margin: EdgeInsets.only(left: 30.0, top: 35.0),

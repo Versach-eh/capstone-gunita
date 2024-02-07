@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gunita20/screens/matching/fruit_the_memory_match_game.dart';
+import 'package:gunita20/screens/matching/menu.dart';
 // import 'package:gunita20/screens/matching/difficulty.dart';
 import 'package:gunita20/screens/matching/the_memory_match_game.dart';
-import 'package:gunita20/screens/matching/fruit_the_memory_match_game.dart';
-// import 'package:gunita20/screens/matching/category.dart';
+import 'package:gunita20/screens/matching/vegetables_the_memory_match_game.dart';
+
 
 class CategoryMatchingMenuScreen extends StatefulWidget {
   const CategoryMatchingMenuScreen({Key? key}) : super(key: key);
@@ -31,8 +33,12 @@ Widget build(BuildContext context) {
             alignment: Alignment.topLeft,
             child: GestureDetector(
               onTap: () {
-                // Handle back button press
-                Navigator.pop(context);
+                 Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchingMenuScreen(),
+                        ),
+                      );
               },
               child: Container(
                 margin: EdgeInsets.only(left: 30.0, top: 35.0),
@@ -114,12 +120,12 @@ Widget build(BuildContext context) {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => TheMemoryMatchGame(),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VegetableTheMemoryMatchGame(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),
@@ -133,7 +139,7 @@ Widget build(BuildContext context) {
                       ),
                     ),
                     child: Text(
-                      "Memes",
+                      "Vegetables",
                       style: TextStyle(
                         fontFamily: 'purple_smile',
                         color: Colors.white,
@@ -203,12 +209,12 @@ Widget build(BuildContext context) {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => FruitTheMemoryMatchGame(),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FruitTheMemoryMatchGame(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(280, 75),

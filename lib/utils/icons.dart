@@ -71,3 +71,17 @@ const List<String> fruitImages = <String>[
   'assets/images/watermelon.png',
   
 ];
+
+const List<String> vegetablesImages = <String>[
+  'assets/images/bell-pepper.png',
+  'assets/images/broccoli.png',
+  'assets/images/carrots.png',
+  'assets/images/eggplant.png',
+  'assets/images/garlic.png',
+  'assets/images/lettuce.png',
+  'assets/images/mushrooms.png',
+  'assets/images/onions.png',
+  'assets/images/potatoes.png',
+  'assets/images/tomato.png',
+  
+];

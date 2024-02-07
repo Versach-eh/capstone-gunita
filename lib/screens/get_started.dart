@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:gunita20/screens/landingpage_screen.dart';
 import 'package:gunita20/screens/signin_screen.dart';
 
 class CoverPage extends StatelessWidget {
@@ -8,34 +7,39 @@ class CoverPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff4b1dcb),
+      backgroundColor: const Color(0xff3D1372),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/whitelogo.png',
-              width: 300,
-              height: 250,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/G.png',
+                  width: 180,
+                  height: 200,
+                ),
+                const Text(
+                  'unita',
+                  style: TextStyle(
+                    fontSize: 85,
+                    fontWeight: FontWeight.normal,
+                    color: Color(0xfffcfbfd),
+                    fontFamily: 'MichlandScript',
+                    fontStyle: FontStyle.normal,
+                  ),
+                ),
+              ],
             ),
             const Text(
-              'Gunita',
+              'Your all-in one app for dementia care',
               style: TextStyle(
-                fontSize:60,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xfffcfbfd), // Set the text color to dark purple
-                fontFamily: 'MagdelinAlt-Regular', // Set the font family
-                fontStyle: FontStyle.normal, // Set the font style
-              ),
-            ),
-            const Text(
-              'Your all in one app for dementia care',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
-                color: Color(0xfff9f6f9), // Set the text color to white
-                fontFamily: 'MagdelinAlt-Medium', // Set the font family
-                fontStyle: FontStyle.normal, // Set the font style
+                color: Color(0xfff9f6f9),
+                fontFamily: 'Magdelin',
+                fontStyle: FontStyle.normal,
               ),
             ),
             const SizedBox(height: 100),
@@ -51,15 +55,14 @@ class CoverPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xff3b0d6b),
-                  fontFamily: 'Magdelin-Bold', // Set the font family
-                  // Set the font color to black
+                  color: Color(0xff3D1372),
+                  fontFamily: 'Magdelin-Bold',
                 ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xffffffff),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 minimumSize: const Size(200, 60),
               ),

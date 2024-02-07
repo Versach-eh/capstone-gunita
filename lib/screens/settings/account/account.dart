@@ -28,45 +28,27 @@ class Account extends StatelessWidget {
           ),
         ),
         child: ListView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white, width: 1),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  hintStyle: TextStyle(
-                    color: Color(0xff8a8a8a),
-                  ),
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            SizedBox(height: 30),
+            SizedBox(height: 100),
             Text(
               'Account Information',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: Color(0xff3b0d6b),
               ),
             ),
-            SizedBox(height: 5),
-            Text(
-              'Account Information',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.normal,
-                color: Color(0xff959595),
-              ),
-            ),
+            // SizedBox(height: 5),
+            // Text(
+            //   'Account Information',
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //     fontWeight: FontWeight.normal,
+            //     color: Color(0xff959595),
+            //   ),
+            // ),
             SizedBox(height: 0),
             _buildContainerWithText(
               text: '',
@@ -175,14 +157,18 @@ class Account extends StatelessWidget {
             ),
           ),
           Container(
-            width: double.infinity,
-            height: containerHeight,
-            margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+          width: double.infinity,
+          height: containerHeight,
+          margin: EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all( // Add this line to set borderSide
+              color: Color(0xfffc4530B2), // Set your desired border color
+              width: 1.0, // Set your desired border width
             ),
+          ),
             child: Column(
               children: children,
             ),
@@ -218,7 +204,7 @@ class Account extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios,
               size: 18,
-              color: Colors.grey,
+              color: Color(0xfffc4530B2),
             ),
           ],
         ),

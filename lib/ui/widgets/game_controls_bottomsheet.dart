@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gunita20/screens/matching/difficulty.dart';
-import 'package:gunita20/ui/pages/startup_page.dart';
+import 'package:gunita20/screens/matching/menu.dart';
+// import 'package:gunita20/ui/pages/startup_page.dart';
 import 'package:gunita20/ui/widgets/game_button.dart';
 import 'package:gunita20/utils/constants.dart';
 
@@ -43,7 +44,7 @@ class GameControlsBottomSheet extends StatelessWidget {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return MatchingDifficultyScreen();
+                    return MatchingMenuScreen();
                   },
                 ),
                 (Route<dynamic> route) => false,
