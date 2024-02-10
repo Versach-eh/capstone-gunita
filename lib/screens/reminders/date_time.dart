@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class DateTimeScreen extends StatefulWidget {
   const DateTimeScreen({Key? key}) : super(key: key);
@@ -15,6 +17,19 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   String repeatOption = 'No Repeat'; // Default repeat option
   bool isNotificationEnabled = false; // Added state for notification toggle
 
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,15 +101,20 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
           ),
           SizedBox(height: 20),
           buildElevatedButton(
-        text: 'Notifications: ${isNotificationEnabled ? 'ON' : 'OFF'}', // Display On/Off status
-        icon: Icons.notifications,
-        onPressed: () {
-          // Handle Notifications button press
-          setState(() {
-            isNotificationEnabled = !isNotificationEnabled; // Toggle notification state
-          });
-        },
-      ),
+            text: 'Notifications: ${isNotificationEnabled ? 'ON' : 'OFF'}',
+            icon: Icons.notifications,
+            onPressed: () {
+              // Handle Notifications button press
+              setState(() {
+                isNotificationEnabled = !isNotificationEnabled;
+              });
+              if (isNotificationEnabled) {
+                _scheduleNotification();
+              } else {
+                _cancelNotification();
+              }
+            },
+          ),
           SizedBox(height: 100),
           Center(
             child: Row(
@@ -272,20 +292,6 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                   Navigator.pop(context);
                 },
               ),
-              ListTile(
-                title: Text('Weekly'),
-                onTap: () {
-                  _setRepeatOption('Weekly');
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Monthly'),
-                onTap: () {
-                  _setRepeatOption('Monthly');
-                  Navigator.pop(context);
-                },
-              ),
             ],
           ),
         );
@@ -310,5 +316,41 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
 
     // Return the data to the previous screen
     Navigator.pop(context, data);
+  }
+
+  void _scheduleNotification() async {
+  if (selectedDate != null && selectedTime != null) {
+    var scheduledDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+      selectedTime!.hour,
+      selectedTime!.minute,
+    );
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.schedule(
+      0,
+      'Hi! You have task  today',
+      'Tap to see task description',
+      scheduledDate,
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+    );
+  }
+}
+
+
+  void _cancelNotification() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
